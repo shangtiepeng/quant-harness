@@ -58,6 +58,30 @@ quant-harness/
 
 ## Quick start
 
+### Daily automation
+
+Run one complete daily job manually:
+
+```bash
+cd /Users/hero/Documents/quant-harness
+python3 scripts/run_daily_job.py
+```
+
+This will:
+- run the pipeline
+- persist the run
+- validate saved signals
+- print a daily summary JSON
+
+Install a weekday cron job (16:05, Mon-Fri):
+
+```bash
+cd /Users/hero/Documents/quant-harness
+./scripts/setup_cron.sh
+```
+
+## Quick start
+
 ### 1. Backend
 
 ```bash
@@ -88,6 +112,7 @@ Then open:
 - `GET /api/signals`
 - `GET /api/report/daily`
 - `POST /api/pipeline/run`  # persist one run into sqlite
+- `POST /api/jobs/daily-run`  # run pipeline + validation as one job
 - `GET /api/history/runs`
 - `GET /api/history/runs/{run_id}/signals`
 - `POST /api/history/runs/{run_id}/validate`

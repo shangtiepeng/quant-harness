@@ -40,6 +40,22 @@ export default async function Page() {
       <h1>Quant Harness Dashboard</h1>
       <p>研究优先的 A 股战法系统 MVP</p>
 
+      <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12, background: '#fffbe6' }}>
+        <h2>Automation</h2>
+        <p>
+          已支持自动日常任务：
+          <code style={{ marginLeft: 8 }}>/api/jobs/daily-run</code>
+        </p>
+        <p>
+          也可以本地执行：
+          <code style={{ marginLeft: 8 }}>python3 scripts/run_daily_job.py</code>
+        </p>
+        <p>
+          若要安装工作日自动任务：
+          <code style={{ marginLeft: 8 }}>./scripts/setup_cron.sh</code>
+        </p>
+      </section>
+
       <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
         <h2>Data Source</h2>
         {data.meta ? (

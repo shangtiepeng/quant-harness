@@ -11,12 +11,13 @@ if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
 from packages.python.analytics import strategy_performance_summary
+from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.validation import validate_run
 
 
-app = FastAPI(title="Quant Harness API", version="0.4.0")
+app = FastAPI(title="Quant Harness API", version="0.5.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -59,6 +60,11 @@ def daily_report():
 @app.post("/api/pipeline/run")
 def pipeline_run():
     return run_pipeline(persist=True)
+
+
+@app.post("/api/jobs/daily-run")
+def jobs_daily_run():
+    return run_daily_job()
 
 
 @app.get("/api/history/runs")
