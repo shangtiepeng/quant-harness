@@ -1,6 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Alert, Button, Card, Descriptions, Layout, Space, Typography } from 'antd'
+
+const { Header, Content } = Layout
+const { Title, Paragraph } = Typography
 
 export default function RunJobPage() {
   const [loading, setLoading] = useState(false)
@@ -16,7 +21,7 @@ export default function RunJobPage() {
       })
       const json = await res.json()
       setResult(json)
-    } catch (e) {
+    } catch {
       setError('执行失败，请确认 API 已启动。')
     } finally {
       setLoading(false)
@@ -24,42 +29,41 @@ export default function RunJobPage() {
   }
 
   return (
-    <main style={{ padding: 24, fontFamily: 'Arial, sans-serif', maxWidth: 900, margin: '0 auto' }}>
-      <h1>Run Daily Job</h1>
-      <p>点击按钮执行一次完整盘后任务：采集、归档、验证、生成日报。</p>
+    <Layout>
+      <Header style={{ background: '#001529' }}>
+        <Space size="large">
+          <Link href="/" style={{ color: '#fff' }}>Dashboard</Link>
+          <Link href="/run-job" style={{ color: '#fff' }}>Run Job</Link>
+          <Link href="/reports" style={{ color: '#fff' }}>Reports</Link>
+          <Link href="/charts" style={{ color: '#fff' }}>Charts</Link>
+        </Space>
+      </Header>
+      <Content style={{ padding: 24 }}>
+        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+          <Card>
+            <Title level={2}>Run Daily Job</Title>
+            <Paragraph>点击按钮执行一次完整盘后任务：采集、归档、验证、生成日报。</Paragraph>
+            <Button type="primary" onClick={runJob} loading={loading}>Run Daily Job</Button>
+          </Card>
 
-      <button
-        onClick={runJob}
-        disabled={loading}
-        style={{
-          padding: '12px 20px',
-          borderRadius: 10,
-          border: 'none',
-          background: loading ? '#999' : '#1677ff',
-          color: 'white',
-          cursor: loading ? 'not-allowed' : 'pointer',
-        }}
-      >
-        {loading ? 'Running...' : 'Run Daily Job'}
-      </button>
+          {error ? <Alert type="error" message={error} /> : null}
 
-      {error ? <p style={{ color: 'red' }}>{error}</p> : null}
-
-      {result ? (
-        <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
-          <h2>Result</h2>
-          <ul>
-            <li>Run ID: {result.run_id}</li>
-            <li>Trade Date: {result.trade_date}</li>
-            <li>Source: {result.source}</li>
-            <li>Signal Count: {result.signal_count}</li>
-            <li>Validation Count: {result.validation_count}</li>
-            <li>JSON Archive: {result.archive?.json_path}</li>
-            <li>Markdown Archive: {result.archive?.md_path}</li>
-          </ul>
-          <p>{result.report?.summary_cn}</p>
-        </section>
-      ) : null}
-    </main>
+          {result ? (
+            <Card title="Execution Result">
+              <Descriptions bordered column={1}>
+                <Descriptions.Item label="Run ID">{result.run_id}</Descriptions.Item>
+                <Descriptions.Item label="Trade Date">{result.trade_date}</Descriptions.Item>
+                <Descriptions.Item label="Source">{result.source}</Descriptions.Item>
+                <Descriptions.Item label="Signal Count">{result.signal_count}</Descriptions.Item>
+                <Descriptions.Item label="Validation Count">{result.validation_count}</Descriptions.Item>
+                <Descriptions.Item label="JSON Archive">{result.archive?.json_path}</Descriptions.Item>
+                <Descriptions.Item label="Markdown Archive">{result.archive?.md_path}</Descriptions.Item>
+              </Descriptions>
+              <Alert style={{ marginTop: 16 }} type="info" message={result.report?.summary_cn} />
+            </Card>
+          ) : null}
+        </Space>
+      </Content>
+    </Layout>
   )
 }

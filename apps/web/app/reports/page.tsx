@@ -1,4 +1,8 @@
 import Link from 'next/link'
+import { Card, Layout, List, Space, Typography } from 'antd'
+
+const { Header, Content, Sider } = Layout
+const { Title, Paragraph } = Typography
 
 async function getReports() {
   try {
@@ -25,46 +29,35 @@ export default async function ReportsPage({ searchParams }: { searchParams: { da
   const detail = await getDetail(selectedDate)
 
   return (
-    <main style={{ padding: 24, fontFamily: 'Arial, sans-serif', maxWidth: 1100, margin: '0 auto' }}>
-      <h1>Archived Daily Reports</h1>
-      <p>点击左侧日期可切换预览不同日报。</p>
-
-      <section style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 20, marginTop: 24 }}>
-        <div style={{ border: '1px solid #ddd', borderRadius: 12, padding: 16 }}>
-          <h2>Reports</h2>
-          {reports.length ? (
-            <ul>
-              {reports.map((item: any) => {
-                const active = item.trade_date === selectedDate
-                return (
-                  <li key={item.trade_date} style={{ marginBottom: 10 }}>
-                    <Link
-                      href={`/reports?date=${item.trade_date}`}
-                      style={{
-                        display: 'inline-block',
-                        padding: '6px 10px',
-                        borderRadius: 8,
-                        textDecoration: 'none',
-                        background: active ? '#1677ff' : '#f5f5f5',
-                        color: active ? '#fff' : '#333',
-                      }}
-                    >
-                      {item.trade_date}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          ) : (
-            <p>暂无历史日报。</p>
-          )}
-        </div>
-
-        <div style={{ border: '1px solid #ddd', borderRadius: 12, padding: 16, whiteSpace: 'pre-wrap' }}>
-          <h2>Preview: {selectedDate || 'N/A'}</h2>
-          {detail?.md ? detail.md : '暂无可预览内容。'}
-        </div>
-      </section>
-    </main>
+    <Layout>
+      <Header style={{ background: '#001529' }}>
+        <Space size="large">
+          <Link href="/" style={{ color: '#fff' }}>Dashboard</Link>
+          <Link href="/run-job" style={{ color: '#fff' }}>Run Job</Link>
+          <Link href="/reports" style={{ color: '#fff' }}>Reports</Link>
+          <Link href="/charts" style={{ color: '#fff' }}>Charts</Link>
+        </Space>
+      </Header>
+      <Layout>
+        <Sider width={320} style={{ background: '#fff', padding: 16, borderRight: '1px solid #f0f0f0' }}>
+          <Title level={4}>Reports</Title>
+          <List
+            bordered
+            dataSource={reports}
+            renderItem={(item: any) => (
+              <List.Item style={{ background: item.trade_date === selectedDate ? '#e6f4ff' : undefined }}>
+                <Link href={`/reports?date=${item.trade_date}`}>{item.trade_date}</Link>
+              </List.Item>
+            )}
+          />
+        </Sider>
+        <Content style={{ padding: 24 }}>
+          <Card>
+            <Title level={3}>Preview: {selectedDate || 'N/A'}</Title>
+            <Paragraph style={{ whiteSpace: 'pre-wrap' }}>{detail?.md || '暂无可预览内容。'}</Paragraph>
+          </Card>
+        </Content>
+      </Layout>
+    </Layout>
   )
 }
