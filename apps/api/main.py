@@ -10,12 +10,13 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
+from packages.python.analytics import strategy_performance_summary
 from packages.python.execution.pipeline import run_pipeline
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.validation import validate_run
 
 
-app = FastAPI(title="Quant Harness API", version="0.3.0")
+app = FastAPI(title="Quant Harness API", version="0.4.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,3 +79,8 @@ def history_run_validate(run_id: int):
 @app.get("/api/history/validations")
 def history_validations(limit: int = 50):
     return list_validations(limit=limit)
+
+
+@app.get("/api/analytics/strategy-performance")
+def analytics_strategy_performance(limit: int = 500):
+    return strategy_performance_summary(limit=limit)

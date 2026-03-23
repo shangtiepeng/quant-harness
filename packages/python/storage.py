@@ -122,6 +122,16 @@ def list_signals_by_run(run_id: int) -> list[dict[str, Any]]:
         return [dict(row) for row in rows]
 
 
+def list_all_signals(limit: int = 500) -> list[dict[str, Any]]:
+    init_db()
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT id, run_id, trade_date, strategy, symbol, name, score, risk_level, theme FROM signals ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+
 def save_validation(signal_id: int, validation: dict[str, Any]) -> int:
     init_db()
     with get_conn() as conn:

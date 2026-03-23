@@ -1,12 +1,13 @@
 async function getPayload() {
   try {
-    const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes] = await Promise.all([
+    const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes] = await Promise.all([
       fetch('http://127.0.0.1:8010/api/meta', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/market/overview', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/signals', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/report/daily', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/history/runs', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/history/validations', { cache: 'no-store' }),
+      fetch('http://127.0.0.1:8010/api/analytics/strategy-performance', { cache: 'no-store' }),
     ])
 
     return {
@@ -16,6 +17,7 @@ async function getPayload() {
       report: await reportRes.json(),
       runs: await runsRes.json(),
       validations: await validationsRes.json(),
+      performance: await perfRes.json(),
     }
   } catch {
     return {
@@ -25,6 +27,7 @@ async function getPayload() {
       report: null,
       runs: [],
       validations: [],
+      performance: [],
     }
   }
 }
@@ -124,6 +127,26 @@ export default async function Page() {
           </div>
         ) : (
           <p>还没有验证结果。先保存 run，再对该 run 调用验证接口。</p>
+        )}
+      </section>
+
+      <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
+        <h2>Strategy Performance</h2>
+        {data.performance.length ? (
+          <div style={{ display: 'grid', gap: 10 }}>
+            {data.performance.map((item: any) => (
+              <div key={item.strategy} style={{ padding: 12, border: '1px solid #eee', borderRadius: 10 }}>
+                <strong>{item.strategy}</strong>
+                <div>Count: {item.count}</div>
+                <div>Avg 1D: {item.avg_return_1d}%</div>
+                <div>Avg 3D: {item.avg_return_3d}%</div>
+                <div>Avg 5D: {item.avg_return_5d}%</div>
+                <div>Win Rate 1D: {item.win_rate_1d}%</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>暂无策略统计数据。</p>
         )}
       </section>
     </main>
