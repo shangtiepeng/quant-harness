@@ -13,11 +13,12 @@ if str(ROOT) not in sys.path:
 from packages.python.analytics import strategy_performance_summary
 from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
+from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.validation import validate_run
 
 
-app = FastAPI(title="Quant Harness API", version="0.5.0")
+app = FastAPI(title="Quant Harness API", version="0.6.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -85,6 +86,16 @@ def history_run_validate(run_id: int):
 @app.get("/api/history/validations")
 def history_validations(limit: int = 50):
     return list_validations(limit=limit)
+
+
+@app.get("/api/history/reports")
+def history_reports(limit: int = 30):
+    return list_archived_reports(limit=limit)
+
+
+@app.get("/api/history/reports/{trade_date}")
+def history_report_detail(trade_date: str):
+    return read_archived_report(trade_date)
 
 
 @app.get("/api/analytics/strategy-performance")

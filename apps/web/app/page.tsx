@@ -58,6 +58,14 @@ export default async function Page() {
           前端手动执行页面：
           <a href="/run-job" style={{ marginLeft: 8 }}>打开 Run Daily Job</a>
         </p>
+        <p>
+          历史日报页面：
+          <a href="/reports" style={{ marginLeft: 8 }}>打开 Reports</a>
+        </p>
+        <p>
+          统计图表页面：
+          <a href="/charts" style={{ marginLeft: 8 }}>打开 Charts</a>
+        </p>
       </section>
 
       <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>

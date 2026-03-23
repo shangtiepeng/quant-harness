@@ -23,6 +23,31 @@ def archive_daily_report(result: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def list_archived_reports(limit: int = 30) -> list[dict[str, str]]:
+    items = []
+    for md_file in sorted(REPORT_DIR.glob("*.md"), reverse=True)[:limit]:
+        trade_date = md_file.stem
+        json_file = REPORT_DIR / f"{trade_date}.json"
+        items.append(
+            {
+                "trade_date": trade_date,
+                "md_path": str(md_file),
+                "json_path": str(json_file),
+            }
+        )
+    return items
+
+
+def read_archived_report(trade_date: str) -> dict[str, str]:
+    md_path = REPORT_DIR / f"{trade_date}.md"
+    json_path = REPORT_DIR / f"{trade_date}.json"
+    return {
+        "trade_date": trade_date,
+        "md": md_path.read_text(encoding="utf-8") if md_path.exists() else "",
+        "json": json_path.read_text(encoding="utf-8") if json_path.exists() else "",
+    }
+
+
 def _to_markdown(result: dict[str, Any]) -> str:
     report = result["report"]
     lines = [

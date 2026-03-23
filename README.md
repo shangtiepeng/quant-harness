@@ -122,6 +122,8 @@ Then open:
 - `GET /api/history/runs/{run_id}/signals`
 - `POST /api/history/runs/{run_id}/validate`
 - `GET /api/history/validations`
+- `GET /api/history/reports`
+- `GET /api/history/reports/{trade_date}`
 - `GET /api/analytics/strategy-performance`
 
 ## Notes
