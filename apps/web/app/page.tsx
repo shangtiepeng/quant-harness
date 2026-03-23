@@ -1,48 +1,49 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card, Col, Layout, Row, Space, Statistic, Table, Tag, Typography } from 'antd'
 
 const { Header, Content } = Layout
 const { Title, Paragraph } = Typography
 
-async function getPayload() {
-  try {
-    const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes] = await Promise.all([
-      fetch('http://127.0.0.1:8010/api/meta', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/market/overview', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/signals', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/report/daily', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/history/runs', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/history/validations', { cache: 'no-store' }),
-      fetch('http://127.0.0.1:8010/api/analytics/strategy-performance', { cache: 'no-store' }),
-    ])
+export default function Page() {
+  const [data, setData] = useState<any>({
+    meta: null,
+    market: null,
+    signals: [],
+    report: null,
+    runs: [],
+    validations: [],
+    performance: [],
+  })
 
-    return {
-      meta: await metaRes.json(),
-      market: await marketRes.json(),
-      signals: await signalsRes.json(),
-      report: await reportRes.json(),
-      runs: await runsRes.json(),
-      validations: await validationsRes.json(),
-      performance: await perfRes.json(),
+  useEffect(() => {
+    async function load() {
+      const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes] = await Promise.all([
+        fetch('http://127.0.0.1:8010/api/meta'),
+        fetch('http://127.0.0.1:8010/api/market/overview'),
+        fetch('http://127.0.0.1:8010/api/signals'),
+        fetch('http://127.0.0.1:8010/api/report/daily'),
+        fetch('http://127.0.0.1:8010/api/history/runs'),
+        fetch('http://127.0.0.1:8010/api/history/validations'),
+        fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
+      ])
+      setData({
+        meta: await metaRes.json(),
+        market: await marketRes.json(),
+        signals: await signalsRes.json(),
+        report: await reportRes.json(),
+        runs: await runsRes.json(),
+        validations: await validationsRes.json(),
+        performance: await perfRes.json(),
+      })
     }
-  } catch {
-    return {
-      meta: null,
-      market: null,
-      signals: [],
-      report: null,
-      runs: [],
-      validations: [],
-      performance: [],
-    }
-  }
-}
-
-export default async function Page() {
-  const data = await getPayload()
+    load()
+  }, [])
 
   const signalColumns = [
-    { title: '标的', dataIndex: 'name', key: 'name', render: (_: any, r: any) => `${r.name} (${r.symbol})` },
+    { title: '标的', dataIndex: 'display', key: 'display' },
     { title: '策略', dataIndex: 'strategy', key: 'strategy', render: (v: string) => <Tag color="blue">{v}</Tag> },
     { title: '题材', dataIndex: 'theme', key: 'theme' },
     { title: '分数', dataIndex: 'score', key: 'score' },
@@ -57,7 +58,7 @@ export default async function Page() {
   ]
 
   const validationColumns = [
-    { title: '标的', dataIndex: 'name', key: 'name', render: (_: any, r: any) => `${r.name} (${r.symbol})` },
+    { title: '标的', dataIndex: 'display', key: 'display' },
     { title: '策略', dataIndex: 'strategy', key: 'strategy' },
     { title: '1D%', dataIndex: 'return_1d', key: 'return_1d' },
     { title: '3D%', dataIndex: 'return_3d', key: 'return_3d' },
@@ -73,6 +74,11 @@ export default async function Page() {
     { title: 'Avg 5D', dataIndex: 'avg_return_5d', key: 'avg_return_5d' },
     { title: 'Win Rate 1D', dataIndex: 'win_rate_1d', key: 'win_rate_1d' },
   ]
+
+  const signals = data.signals.map((r: any, i: number) => ({ ...r, key: `${r.strategy}-${r.symbol}-${i}`, display: `${r.name} (${r.symbol})` }))
+  const runs = data.runs.map((r: any) => ({ ...r, key: r.id }))
+  const validations = data.validations.map((r: any) => ({ ...r, key: r.id, display: `${r.name} (${r.symbol})` }))
+  const performance = data.performance.map((r: any) => ({ ...r, key: r.strategy }))
 
   return (
     <Layout>
@@ -104,19 +110,19 @@ export default async function Page() {
           </Card>
 
           <Card title="Top Signals">
-            <Table rowKey={(r) => `${r.strategy}-${r.symbol}`} columns={signalColumns} dataSource={data.signals} pagination={{ pageSize: 5 }} />
+            <Table columns={signalColumns} dataSource={signals} pagination={{ pageSize: 5 }} />
           </Card>
 
           <Card title="Historical Runs">
-            <Table rowKey="id" columns={runColumns} dataSource={data.runs} pagination={{ pageSize: 5 }} />
+            <Table columns={runColumns} dataSource={runs} pagination={{ pageSize: 5 }} />
           </Card>
 
           <Card title="Validation Results">
-            <Table rowKey="id" columns={validationColumns} dataSource={data.validations} pagination={{ pageSize: 5 }} />
+            <Table columns={validationColumns} dataSource={validations} pagination={{ pageSize: 5 }} />
           </Card>
 
           <Card title="Strategy Performance">
-            <Table rowKey="strategy" columns={perfColumns} dataSource={data.performance} pagination={false} />
+            <Table columns={perfColumns} dataSource={performance} pagination={false} />
           </Card>
         </Space>
       </Content>

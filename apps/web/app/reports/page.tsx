@@ -1,32 +1,37 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card, Layout, List, Space, Typography } from 'antd'
 
 const { Header, Content, Sider } = Layout
 const { Title, Paragraph } = Typography
 
-async function getReports() {
-  try {
-    const res = await fetch('http://127.0.0.1:8010/api/history/reports', { cache: 'no-store' })
-    return await res.json()
-  } catch {
-    return []
-  }
-}
+export default function ReportsPage() {
+  const [reports, setReports] = useState<any[]>([])
+  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [detail, setDetail] = useState<any>(null)
 
-async function getDetail(tradeDate?: string) {
-  if (!tradeDate) return null
-  try {
-    const res = await fetch(`http://127.0.0.1:8010/api/history/reports/${tradeDate}`, { cache: 'no-store' })
-    return await res.json()
-  } catch {
-    return null
-  }
-}
+  useEffect(() => {
+    async function load() {
+      const res = await fetch('http://127.0.0.1:8010/api/history/reports')
+      const data = await res.json()
+      setReports(data)
+      const first = data[0]?.trade_date || ''
+      setSelectedDate(first)
+      if (first) {
+        const detailRes = await fetch(`http://127.0.0.1:8010/api/history/reports/${first}`)
+        setDetail(await detailRes.json())
+      }
+    }
+    load()
+  }, [])
 
-export default async function ReportsPage({ searchParams }: { searchParams: { date?: string } }) {
-  const reports = await getReports()
-  const selectedDate = searchParams?.date || reports[0]?.trade_date
-  const detail = await getDetail(selectedDate)
+  async function selectReport(date: string) {
+    setSelectedDate(date)
+    const res = await fetch(`http://127.0.0.1:8010/api/history/reports/${date}`)
+    setDetail(await res.json())
+  }
 
   return (
     <Layout>
@@ -45,8 +50,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: { da
             bordered
             dataSource={reports}
             renderItem={(item: any) => (
-              <List.Item style={{ background: item.trade_date === selectedDate ? '#e6f4ff' : undefined }}>
-                <Link href={`/reports?date=${item.trade_date}`}>{item.trade_date}</Link>
+              <List.Item onClick={() => selectReport(item.trade_date)} style={{ cursor: 'pointer', background: item.trade_date === selectedDate ? '#e6f4ff' : undefined }}>
+                {item.trade_date}
               </List.Item>
             )}
           />

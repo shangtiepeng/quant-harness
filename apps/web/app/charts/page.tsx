@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Card, Layout, Space, Statistic, Typography } from 'antd'
 import ChartsClient from './ChartsClient'
@@ -5,17 +8,17 @@ import ChartsClient from './ChartsClient'
 const { Header, Content } = Layout
 const { Title, Paragraph } = Typography
 
-async function getPerformance() {
-  try {
-    const res = await fetch('http://127.0.0.1:8010/api/analytics/strategy-performance', { cache: 'no-store' })
-    return await res.json()
-  } catch {
-    return []
-  }
-}
+export default function ChartsPage() {
+  const [items, setItems] = useState<any[]>([])
 
-export default async function ChartsPage() {
-  const items = await getPerformance()
+  useEffect(() => {
+    async function load() {
+      const res = await fetch('http://127.0.0.1:8010/api/analytics/strategy-performance')
+      setItems(await res.json())
+    }
+    load()
+  }, [])
+
   const best = items[0]
 
   return (
