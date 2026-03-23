@@ -1,10 +1,12 @@
 async function getPayload() {
   try {
-    const [metaRes, marketRes, signalsRes, reportRes] = await Promise.all([
+    const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes] = await Promise.all([
       fetch('http://127.0.0.1:8010/api/meta', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/market/overview', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/signals', { cache: 'no-store' }),
       fetch('http://127.0.0.1:8010/api/report/daily', { cache: 'no-store' }),
+      fetch('http://127.0.0.1:8010/api/history/runs', { cache: 'no-store' }),
+      fetch('http://127.0.0.1:8010/api/history/validations', { cache: 'no-store' }),
     ])
 
     return {
@@ -12,6 +14,8 @@ async function getPayload() {
       market: await marketRes.json(),
       signals: await signalsRes.json(),
       report: await reportRes.json(),
+      runs: await runsRes.json(),
+      validations: await validationsRes.json(),
     }
   } catch {
     return {
@@ -19,6 +23,8 @@ async function getPayload() {
       market: null,
       signals: [],
       report: null,
+      runs: [],
+      validations: [],
     }
   }
 }
@@ -87,6 +93,37 @@ export default async function Page() {
           </>
         ) : (
           <p>No report available yet.</p>
+        )}
+      </section>
+
+      <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
+        <h2>Historical Runs</h2>
+        {data.runs.length ? (
+          <ul>
+            {data.runs.map((run: any) => (
+              <li key={run.id}>#{run.id} · {run.trade_date} · {run.source} · {run.created_at}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>还没有历史运行。先调用一次 POST /api/pipeline/run 保存一轮结果。</p>
+        )}
+      </section>
+
+      <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
+        <h2>Validation Results</h2>
+        {data.validations.length ? (
+          <div style={{ display: 'grid', gap: 10 }}>
+            {data.validations.map((item: any) => (
+              <div key={item.id} style={{ padding: 12, border: '1px solid #eee', borderRadius: 10 }}>
+                <strong>{item.name} ({item.symbol})</strong>
+                <div>Strategy: {item.strategy}</div>
+                <div>1D: {item.return_1d}% · 3D: {item.return_3d}% · 5D: {item.return_5d}%</div>
+                <div>Outcome: {item.outcome_label}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>还没有验证结果。先保存 run，再对该 run 调用验证接口。</p>
         )}
       </section>
     </main>

@@ -83,10 +83,15 @@ Then open:
 ## API endpoints
 
 - `GET /health`
+- `GET /api/meta`
 - `GET /api/market/overview`
 - `GET /api/signals`
 - `GET /api/report/daily`
-- `POST /api/pipeline/run`
+- `POST /api/pipeline/run`  # persist one run into sqlite
+- `GET /api/history/runs`
+- `GET /api/history/runs/{run_id}/signals`
+- `POST /api/history/runs/{run_id}/validate`
+- `GET /api/history/validations`
 
 ## Notes
 
