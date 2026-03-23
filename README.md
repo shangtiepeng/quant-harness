@@ -90,8 +90,21 @@ Then open:
 
 ## Notes
 
-Current version uses sample data + deterministic scoring so the system is runnable immediately.
-You can later swap in real collectors from AkShare / Tushare / 东方财富 / exchange data.
+Current version prefers **real market input when available**:
+1. AkShare
+2. Eastmoney public endpoint fallback
+3. bundled sample data fallback
+
+So the system remains runnable even if one source fails.
+
+## Recommended route
+
+The current implementation follows the most stable route:
+- clean local repo hygiene
+- connect real market data conservatively
+- keep sample fallback for reliability
+- generate a post-market daily loop first
+- expand later into storage / backtest / paper trading
 
 ## Next expansion ideas
 

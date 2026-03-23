@@ -1,17 +1,15 @@
 from __future__ import annotations
 
-from datetime import date
-
-from packages.python.data.sample_loader import load_sample_market
+from packages.python.data.real_collectors import load_market_data
 from packages.python.reports.daily import build_daily_report
 from packages.python.strategies.hotmoney import pick_hotmoney_signals
 from packages.python.strategies.leader import pick_leader_signals
 from packages.python.strategies.sentiment import compute_market_overview
 
 
-def run_pipeline():
-    trade_date = str(date.today())
-    stocks = load_sample_market()
+def run_pipeline(limit: int = 50):
+    stocks, meta = load_market_data(limit=limit)
+    trade_date = meta["trade_date"]
     market = compute_market_overview(stocks, trade_date)
     leader_signals = pick_leader_signals(stocks, limit=5)
     hotmoney_signals = pick_hotmoney_signals(stocks, limit=5)
@@ -19,6 +17,7 @@ def run_pipeline():
     report = build_daily_report(trade_date, market, signals)
 
     return {
+        "meta": meta,
         "trade_date": trade_date,
         "market": market.model_dump(),
         "signals": [s.model_dump() for s in signals],

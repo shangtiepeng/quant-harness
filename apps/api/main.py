@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
 from packages.python.execution.pipeline import run_pipeline
 
 
-app = FastAPI(title="Quant Harness API", version="0.1.0")
+app = FastAPI(title="Quant Harness API", version="0.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +27,12 @@ app.add_middleware(
 @app.get("/health")
 def health():
     return {"ok": True}
+
+
+@app.get("/api/meta")
+def meta():
+    payload = run_pipeline()
+    return payload["meta"]
 
 
 @app.get("/api/market/overview")
