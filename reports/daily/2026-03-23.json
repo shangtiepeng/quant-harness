@@ -1,0 +1,164 @@
+{
+  "run_id": 4,
+  "trade_date": "2026-03-23",
+  "source": "eastmoney",
+  "signal_count": 10,
+  "validation_count": 10,
+  "report": {
+    "trade_date": "2026-03-23",
+    "market": {
+      "trade_date": "2026-03-23",
+      "market_sentiment_stage": "ice",
+      "limit_up_count": 34,
+      "limit_down_count": 0,
+      "broken_board_rate": 0.0,
+      "highest_board": 0,
+      "notes": [
+        "涨停家数 34 / Limit-up count 34",
+        "跌停家数 0 / Limit-down count 0",
+        "最高连板 0 / Highest board 0",
+        "炸板率 0.0% / Broken-board rate 0.0%"
+      ]
+    },
+    "top_signals": [
+      {
+        "strategy": "leader",
+        "symbol": "301667",
+        "name": "纳百川",
+        "score": 100.0,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "603687",
+        "name": "大胜达",
+        "score": 100.0,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 10.8",
+          "叙事强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "603529",
+        "name": "爱玛科技",
+        "score": 82.2,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 6.97",
+          "叙事强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300345",
+        "name": "华民股份",
+        "score": 78.9,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300868",
+        "name": "杰美特",
+        "score": 75.8,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 6.33",
+          "叙事强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "603787",
+        "name": "新日股份",
+        "score": 75.7,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 6.32",
+          "叙事强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "leader",
+        "symbol": "603687",
+        "name": "大胜达",
+        "score": 66.6,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "未分类"
+      },
+      {
+        "strategy": "leader",
+        "symbol": "603803",
+        "name": "瑞斯康达",
+        "score": 66.0,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 未分类"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "未分类"
+      }
+    ],
+    "summary_cn": "2026-03-23 市场情绪阶段为 ice。涨停 34 家，跌停 0 家，最高连板 0。当前值得重点观察的标的包括：纳百川(301667)、大胜达(603687)、爱玛科技(603529)、华民股份(300345)、杰美特(300868)。建议先以盘后研究和次日验证为主，谨慎直接自动执行。",
+    "summary_en": "On 2026-03-23, the market sentiment stage is ice. There are 34 limit-up stocks, 0 limit-down stocks, and the highest board is 0. Key watchlist names: 纳百川(301667)、大胜达(603687)、爱玛科技(603529)、华民股份(300345)、杰美特(300868). Use this as a research-first signal report rather than a fully automated execution trigger."
+  }
+}

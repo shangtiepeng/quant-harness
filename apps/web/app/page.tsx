@@ -54,6 +54,10 @@ export default async function Page() {
           若要安装工作日自动任务：
           <code style={{ marginLeft: 8 }}>./scripts/setup_cron.sh</code>
         </p>
+        <p>
+          前端手动执行页面：
+          <a href="/run-job" style={{ marginLeft: 8 }}>打开 Run Daily Job</a>
+        </p>
       </section>
 
       <section style={{ marginTop: 24, padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>

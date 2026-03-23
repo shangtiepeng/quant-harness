@@ -71,7 +71,12 @@ This will:
 - run the pipeline
 - persist the run
 - validate saved signals
+- archive the report to JSON and Markdown
 - print a daily summary JSON
+
+Archived reports are written to:
+- `reports/daily/YYYY-MM-DD.json`
+- `reports/daily/YYYY-MM-DD.md`
 
 Install a weekday cron job (16:05, Mon-Fri):
 
