@@ -109,6 +109,15 @@ export default function Page() {
   }, [signals, selectedSignalKey])
 
   const selectedSignal = signals.find((item) => item.key === selectedSignalKey) || null
+  const mainlineThemes = data.themeHeat.filter((item: any) => item.is_mainline).map((item: any) => item.theme)
+  const selectedThemePeers = selectedSignal
+    ? signals.filter(
+        (item) => item.key !== selectedSignal.key && item.theme === selectedSignal.theme,
+      )
+    : []
+  const selectedThemeRank = selectedSignal
+    ? data.themeHeat.findIndex((item: any) => item.theme === selectedSignal.theme) + 1
+    : 0
 
   const signalColumns = [
     { title: '标的', dataIndex: 'display', key: 'display' },
@@ -165,8 +174,19 @@ export default function Page() {
   ]
 
   const themeHeatColumns = [
-    { title: '题材', dataIndex: 'theme', key: 'theme', render: (v: string) => <Tag color="volcano">{v}</Tag> },
-    { title: '热度', dataIndex: 'count', key: 'count' },
+    {
+      title: '题材',
+      dataIndex: 'theme',
+      key: 'theme',
+      render: (v: string, record: any) => (
+        <Space wrap>
+          <Tag color="volcano">{v}</Tag>
+          {record.is_mainline ? <Tag color="red">主线</Tag> : null}
+        </Space>
+      ),
+    },
+    { title: '出现数', dataIndex: 'count', key: 'count' },
+    { title: '强度分', dataIndex: 'heat_score', key: 'heat_score' },
     {
       title: '代表个股',
       dataIndex: 'leaders',
@@ -260,6 +280,12 @@ export default function Page() {
                       <Descriptions.Item label="次题材">
                         {selectedSignal.secondary_theme || '-'}
                       </Descriptions.Item>
+                      <Descriptions.Item label="主线判断">
+                        {mainlineThemes.includes(selectedSignal.theme) ? '是，属于当前主线题材' : '否，暂不属于主线第一梯队'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="题材热度排名">
+                        {selectedThemeRank > 0 ? `第 ${selectedThemeRank} 名` : '未进入热度榜'}
+                      </Descriptions.Item>
                       <Descriptions.Item label="入场说明">
                         {selectedSignal.entry_note}
                       </Descriptions.Item>
@@ -280,6 +306,22 @@ export default function Page() {
                             {concept}
                           </Tag>
                         ))}
+                      </Space>
+                    </div>
+
+                    <div>
+                      <Text strong>同题材代表股对比</Text>
+                      <Divider style={{ margin: '8px 0 12px' }} />
+                      <Space wrap>
+                        {selectedThemePeers.length > 0 ? (
+                          selectedThemePeers.slice(0, 6).map((peer) => (
+                            <Tag key={peer.key} color="magenta">
+                              {peer.name}({peer.symbol}) · {peer.score}
+                            </Tag>
+                          ))
+                        ) : (
+                          <Text type="secondary">当前 Top Signals 中暂无更多同题材代表股</Text>
+                        )}
                       </Space>
                     </div>
 

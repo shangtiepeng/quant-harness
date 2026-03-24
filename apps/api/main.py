@@ -68,25 +68,33 @@ def signals():
 def themes_heat(limit: int = 10):
     stocks, meta = load_market_data(limit=50)
     counter: Counter[str] = Counter()
+    score_map: dict[str, float] = {}
     leaders: dict[str, list[str]] = {}
     for stock in stocks:
         concepts = stock.concepts or ([stock.theme] if stock.theme else [])
-        for concept in concepts[:3]:
+        for idx, concept in enumerate(concepts[:3]):
             if not concept or concept == '题材待补全':
                 continue
+            weight = 1.0 if idx == 0 else 0.6 if idx == 1 else 0.3
             counter[concept] += 1
+            score_map[concept] = score_map.get(concept, 0.0) + (
+                weight * (1 + max(stock.pct_change, 0) / 10 + stock.volume_ratio / 5)
+            )
             leaders.setdefault(concept, [])
             if len(leaders[concept]) < 3:
                 leaders[concept].append(f"{stock.name}({stock.symbol})")
+    ranked = sorted(counter.items(), key=lambda item: (score_map.get(item[0], 0), item[1]), reverse=True)
     return {
         "meta": meta,
         "items": [
             {
                 "theme": theme,
                 "count": count,
+                "heat_score": round(score_map.get(theme, 0.0), 2),
+                "is_mainline": index < 3,
                 "leaders": leaders.get(theme, []),
             }
-            for theme, count in counter.most_common(limit)
+            for index, (theme, count) in enumerate(ranked[:limit])
         ],
     }
 
