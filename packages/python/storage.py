@@ -168,3 +168,48 @@ def list_validations(limit: int = 50) -> list[dict[str, Any]]:
             (limit,),
         ).fetchall()
         return [dict(row) for row in rows]
+
+
+def list_validation_signal_details(limit: int = 500) -> list[dict[str, Any]]:
+    init_db()
+    with get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT
+                v.id,
+                v.validation_date,
+                v.return_1d,
+                v.return_3d,
+                v.return_5d,
+                v.outcome_label,
+                v.note,
+                s.trade_date,
+                s.strategy,
+                s.symbol,
+                s.name,
+                s.score,
+                s.risk_level,
+                s.theme,
+                s.signal_json,
+                pr.market_json
+            FROM validations v
+            JOIN signals s ON s.id = v.signal_id
+            JOIN pipeline_runs pr ON pr.id = s.run_id
+            ORDER BY v.id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        items: list[dict[str, Any]] = []
+        for row in rows:
+            item = dict(row)
+            try:
+                item['signal'] = json.loads(item.pop('signal_json'))
+            except Exception:
+                item['signal'] = {}
+            try:
+                item['market'] = json.loads(item.pop('market_json'))
+            except Exception:
+                item['market'] = {}
+            items.append(item)
+        return items
