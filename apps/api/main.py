@@ -64,6 +64,12 @@ def signals():
     return payload["signals"]
 
 
+@app.get("/api/candidates")
+def candidates():
+    payload = run_pipeline()
+    return payload["candidates"]
+
+
 @app.get("/api/themes/heat")
 def themes_heat(limit: int = 10):
     stocks, meta = load_market_data(limit=50)

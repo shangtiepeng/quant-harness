@@ -73,6 +73,7 @@ export default function Page() {
     meta: null,
     market: null,
     signals: [],
+    candidates: [],
     report: null,
     runs: [],
     validations: [],
@@ -83,10 +84,11 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
+      const [metaRes, marketRes, signalsRes, candidatesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
         fetch('http://127.0.0.1:8010/api/meta'),
         fetch('http://127.0.0.1:8010/api/market/overview'),
         fetch('http://127.0.0.1:8010/api/signals'),
+        fetch('http://127.0.0.1:8010/api/candidates'),
         fetch('http://127.0.0.1:8010/api/report/daily'),
         fetch('http://127.0.0.1:8010/api/history/runs'),
         fetch('http://127.0.0.1:8010/api/history/validations'),
@@ -98,6 +100,7 @@ export default function Page() {
         meta: await metaRes.json(),
         market: await marketRes.json(),
         signals: await signalsRes.json(),
+        candidates: await candidatesRes.json(),
         report: await reportRes.json(),
         runs: await runsRes.json(),
         validations: await validationsRes.json(),
@@ -117,21 +120,28 @@ export default function Page() {
     }))
   }, [data.signals])
 
+  const candidates = useMemo(() => {
+    return data.candidates.map((r: any, i: number) => ({
+      ...r,
+      key: `candidate-${r.symbol}-${i}`,
+    }))
+  }, [data.candidates])
+
   useEffect(() => {
-    if (!signals.length) {
+    if (!candidates.length) {
       setSelectedSignalKey(null)
       return
     }
-    if (!selectedSignalKey || !signals.find((item) => item.key === selectedSignalKey)) {
-      setSelectedSignalKey(signals[0].key)
+    if (!selectedSignalKey || !candidates.find((item: any) => item.key === selectedSignalKey)) {
+      setSelectedSignalKey(candidates[0].key)
     }
-  }, [signals, selectedSignalKey])
+  }, [candidates, selectedSignalKey])
 
-  const selectedSignal = signals.find((item) => item.key === selectedSignalKey) || null
+  const selectedSignal = candidates.find((item: any) => item.key === selectedSignalKey) || null
   const mainlineThemes = data.themeHeat.filter((item: any) => item.is_mainline).map((item: any) => item.theme)
   const selectedThemePeers = selectedSignal
-    ? signals.filter(
-        (item) => item.key !== selectedSignal.key && item.theme === selectedSignal.theme,
+    ? candidates.filter(
+        (item: any) => item.key !== selectedSignal.key && item.theme === selectedSignal.theme,
       )
     : []
   const selectedThemeRank = selectedSignal
@@ -139,12 +149,18 @@ export default function Page() {
     : 0
 
   const signalColumns = [
-    { title: '标的', dataIndex: 'display', key: 'display' },
+    { title: '候选标的', dataIndex: 'display', key: 'display' },
     {
-      title: '策略',
-      dataIndex: 'strategy',
-      key: 'strategy',
-      render: (v: string) => <Tag color="blue">{strategyLabelMap[v] || v}</Tag>,
+      title: '策略共识',
+      dataIndex: 'strategies',
+      key: 'strategies',
+      render: (values: string[]) => (
+        <Space wrap>
+          {(values || []).map((v) => (
+            <Tag color="blue" key={v}>{strategyLabelMap[v] || v}</Tag>
+          ))}
+        </Space>
+      ),
     },
     {
       title: '共振等级',
@@ -266,15 +282,15 @@ export default function Page() {
 
           <Row gutter={16} align="stretch">
             <Col span={14}>
-              <Card title="Top Signals">
+              <Card title="强共振候选池">
                 <Table
                   columns={signalColumns}
-                  dataSource={signals}
+                  dataSource={candidates}
                   pagination={{ pageSize: 6 }}
-                  rowClassName={(record: SignalRow) =>
+                  rowClassName={(record: any) =>
                     record.key === selectedSignalKey ? 'selected-signal-row' : ''
                   }
-                  onRow={(record: SignalRow) => ({
+                  onRow={(record: any) => ({
                     onClick: () => setSelectedSignalKey(record.key),
                     style: { cursor: 'pointer' },
                   })}
@@ -291,13 +307,17 @@ export default function Page() {
                     </div>
 
                     <Space wrap>
-                      <Tag color="blue">{strategyLabelMap[selectedSignal.strategy] || selectedSignal.strategy}</Tag>
+                      <Space wrap>
+                        {(selectedSignal.strategies || []).map((v: string) => (
+                          <Tag color="blue" key={v}>{strategyLabelMap[v] || v}</Tag>
+                        ))}
+                      </Space>
                       <Tag color={resonanceColorMap[selectedSignal.resonance_level] || 'default'}>共振等级：{selectedSignal.resonance_level}</Tag>
                       <Tag color="purple">共振角色：{resonanceRoleMap[selectedSignal.resonance_role] || selectedSignal.resonance_role}</Tag>
                       <Tag color="gold">主题材：{selectedSignal.theme || '未分类'}</Tag>
                       <Tag color="lime">次题材：{selectedSignal.secondary_theme || '-'}</Tag>
                       <Tag color={riskColorMap[selectedSignal.risk_level] || 'default'}>风险：{selectedSignal.risk_level}</Tag>
-                      <Tag color="geekblue">原策略分：{selectedSignal.score}</Tag>
+                      <Tag color="geekblue">策略共识数：{selectedSignal.strategy_count || 0}</Tag>
                       <Tag color="magenta">共振分：{selectedSignal.resonance_score}</Tag>
                     </Space>
 
@@ -320,14 +340,17 @@ export default function Page() {
                       <Descriptions.Item label="共振等级">
                         {selectedSignal.resonance_level}
                       </Descriptions.Item>
+                      <Descriptions.Item label="策略共识">
+                        {(selectedSignal.strategies || []).map((v: string) => strategyLabelMap[v] || v).join(' / ') || '单策略'}
+                      </Descriptions.Item>
                       <Descriptions.Item label="入场说明">
-                        {selectedSignal.entry_note}
+                        {selectedSignal.source_signals?.[0]?.entry_note || '—'}
                       </Descriptions.Item>
                       <Descriptions.Item label="退出说明">
-                        {selectedSignal.exit_note}
+                        {selectedSignal.source_signals?.[0]?.exit_note || '—'}
                       </Descriptions.Item>
                       <Descriptions.Item label="失效条件">
-                        {selectedSignal.invalidation_note}
+                        {selectedSignal.source_signals?.[0]?.invalidation_note || '—'}
                       </Descriptions.Item>
                     </Descriptions>
 
@@ -335,7 +358,7 @@ export default function Page() {
                       <Text strong>概念列表</Text>
                       <Divider style={{ margin: '8px 0 12px' }} />
                       <Space wrap>
-                        {(selectedSignal.concepts || []).slice(0, 8).map((concept) => (
+                        {(selectedSignal.concepts || []).slice(0, 8).map((concept: string) => (
                           <Tag key={`${selectedSignal.key}-${concept}`} color="cyan">
                             {concept}
                           </Tag>
@@ -348,7 +371,7 @@ export default function Page() {
                       <Divider style={{ margin: '8px 0 12px' }} />
                       <Space wrap>
                         {selectedThemePeers.length > 0 ? (
-                          selectedThemePeers.slice(0, 6).map((peer) => (
+                          selectedThemePeers.slice(0, 6).map((peer: any) => (
                             <Tag key={peer.key} color="magenta">
                               {peer.name}({peer.symbol}) · {peer.score}
                             </Tag>
@@ -363,7 +386,7 @@ export default function Page() {
                       <Text strong>核心理由</Text>
                       <Divider style={{ margin: '8px 0 12px' }} />
                       <Space wrap>
-                        {selectedSignal.reasons?.map((reason, idx) => (
+                        {selectedSignal.reasons?.map((reason: string, idx: number) => (
                           <Tag key={`${selectedSignal.key}-reason-${idx}`} color="geekblue">
                             {reason}
                           </Tag>
@@ -375,7 +398,7 @@ export default function Page() {
                       <Text strong>共振说明</Text>
                       <Divider style={{ margin: '8px 0 12px' }} />
                       <Space wrap>
-                        {selectedSignal.resonance_reasons?.map((reason, idx) => (
+                        {selectedSignal.resonance_reasons?.map((reason: string, idx: number) => (
                           <Tag key={`${selectedSignal.key}-resonance-${idx}`} color="magenta">
                             {reason}
                           </Tag>

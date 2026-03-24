@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from packages.python.data.real_collectors import load_market_data
 from packages.python.reports.daily import build_daily_report
+from packages.python.signals_aggregate import aggregate_signal_candidates
 from packages.python.storage import save_pipeline_run
 from packages.python.strategies.hotmoney import pick_hotmoney_signals
 from packages.python.strategies.leader import pick_leader_signals
@@ -17,13 +18,16 @@ def run_pipeline(limit: int = 50, persist: bool = False):
     leader_signals = pick_leader_signals(stocks, market=market, theme_heat=theme_heat, limit=5)
     hotmoney_signals = pick_hotmoney_signals(stocks, market=market, theme_heat=theme_heat, limit=5)
     signals = sorted(leader_signals + hotmoney_signals, key=lambda s: (s.resonance_score, s.score), reverse=True)
+    signal_dicts = [s.model_dump() for s in signals]
+    candidates = aggregate_signal_candidates(signal_dicts)
     report = build_daily_report(trade_date, market, signals)
 
     payload = {
         "meta": meta,
         "trade_date": trade_date,
         "market": market.model_dump(),
-        "signals": [s.model_dump() for s in signals],
+        "signals": signal_dicts,
+        "candidates": candidates,
         "report": report.model_dump(),
         "theme_heat": theme_heat,
     }
