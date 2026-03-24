@@ -33,6 +33,10 @@ type SignalRow = {
   theme: string
   secondary_theme?: string
   concepts?: string[]
+  resonance_score: number
+  resonance_level: 'A' | 'B' | 'C' | 'D'
+  resonance_role: string
+  resonance_reasons?: string[]
   display: string
 }
 
@@ -47,6 +51,21 @@ const riskColorMap: Record<string, string> = {
   low: 'green',
   medium: 'orange',
   high: 'red',
+}
+
+const resonanceColorMap: Record<string, string> = {
+  A: 'red',
+  B: 'volcano',
+  C: 'gold',
+  D: 'default',
+}
+
+const resonanceRoleMap: Record<string, string> = {
+  mainline_leader: '主线龙头',
+  frontline_core: '前排核心',
+  secondary_rotation: '轮动补涨',
+  follower: '跟风观察',
+  noise: '噪声票',
 }
 
 export default function Page() {
@@ -128,18 +147,24 @@ export default function Page() {
       render: (v: string) => <Tag color="blue">{strategyLabelMap[v] || v}</Tag>,
     },
     {
+      title: '共振等级',
+      dataIndex: 'resonance_level',
+      key: 'resonance_level',
+      render: (v: string) => <Tag color={resonanceColorMap[v] || 'default'}>{v}</Tag>,
+    },
+    {
+      title: '共振角色',
+      dataIndex: 'resonance_role',
+      key: 'resonance_role',
+      render: (v: string) => <Tag color="purple">{resonanceRoleMap[v] || v}</Tag>,
+    },
+    {
       title: '主题材',
       dataIndex: 'theme',
       key: 'theme',
       render: (v: string) => <Tag color="gold">{v || '未分类'}</Tag>,
     },
-    {
-      title: '次题材',
-      dataIndex: 'secondary_theme',
-      key: 'secondary_theme',
-      render: (v: string) => <Tag color="lime">{v || '-'}</Tag>,
-    },
-    { title: '分数', dataIndex: 'score', key: 'score' },
+    { title: '共振分', dataIndex: 'resonance_score', key: 'resonance_score' },
     {
       title: '风险',
       dataIndex: 'risk_level',
@@ -267,10 +292,13 @@ export default function Page() {
 
                     <Space wrap>
                       <Tag color="blue">{strategyLabelMap[selectedSignal.strategy] || selectedSignal.strategy}</Tag>
+                      <Tag color={resonanceColorMap[selectedSignal.resonance_level] || 'default'}>共振等级：{selectedSignal.resonance_level}</Tag>
+                      <Tag color="purple">共振角色：{resonanceRoleMap[selectedSignal.resonance_role] || selectedSignal.resonance_role}</Tag>
                       <Tag color="gold">主题材：{selectedSignal.theme || '未分类'}</Tag>
                       <Tag color="lime">次题材：{selectedSignal.secondary_theme || '-'}</Tag>
                       <Tag color={riskColorMap[selectedSignal.risk_level] || 'default'}>风险：{selectedSignal.risk_level}</Tag>
-                      <Tag color="purple">分数：{selectedSignal.score}</Tag>
+                      <Tag color="geekblue">原策略分：{selectedSignal.score}</Tag>
+                      <Tag color="magenta">共振分：{selectedSignal.resonance_score}</Tag>
                     </Space>
 
                     <Descriptions column={1} size="small" bordered>
@@ -285,6 +313,12 @@ export default function Page() {
                       </Descriptions.Item>
                       <Descriptions.Item label="题材热度排名">
                         {selectedThemeRank > 0 ? `第 ${selectedThemeRank} 名` : '未进入热度榜'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="共振角色">
+                        {resonanceRoleMap[selectedSignal.resonance_role] || selectedSignal.resonance_role}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="共振等级">
+                        {selectedSignal.resonance_level}
                       </Descriptions.Item>
                       <Descriptions.Item label="入场说明">
                         {selectedSignal.entry_note}
@@ -331,6 +365,18 @@ export default function Page() {
                       <Space wrap>
                         {selectedSignal.reasons?.map((reason, idx) => (
                           <Tag key={`${selectedSignal.key}-reason-${idx}`} color="geekblue">
+                            {reason}
+                          </Tag>
+                        ))}
+                      </Space>
+                    </div>
+
+                    <div>
+                      <Text strong>共振说明</Text>
+                      <Divider style={{ margin: '8px 0 12px' }} />
+                      <Space wrap>
+                        {selectedSignal.resonance_reasons?.map((reason, idx) => (
+                          <Tag key={`${selectedSignal.key}-resonance-${idx}`} color="magenta">
                             {reason}
                           </Tag>
                         ))}

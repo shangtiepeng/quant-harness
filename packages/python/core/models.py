@@ -36,6 +36,10 @@ class StrategySignal(BaseModel):
     theme: str
     secondary_theme: str = ""
     concepts: list[str] = []
+    resonance_score: float = Field(default=0, ge=0, le=100)
+    resonance_level: Literal["A", "B", "C", "D"] = "D"
+    resonance_role: str = "noise"
+    resonance_reasons: list[str] = []
 
 
 class MarketOverview(BaseModel):

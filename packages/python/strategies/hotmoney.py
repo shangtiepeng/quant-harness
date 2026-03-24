@@ -1,9 +1,15 @@
 from __future__ import annotations
 
-from packages.python.core.models import StockSnapshot, StrategySignal
+from packages.python.core.models import MarketOverview, StockSnapshot, StrategySignal
+from packages.python.strategies.resonance import compute_resonance_score
 
 
-def pick_hotmoney_signals(stocks: list[StockSnapshot], limit: int = 5) -> list[StrategySignal]:
+def pick_hotmoney_signals(
+    stocks: list[StockSnapshot],
+    market: MarketOverview,
+    theme_heat: dict[str, dict[str, float | int | bool]],
+    limit: int = 5,
+) -> list[StrategySignal]:
     ranked = sorted(
         stocks,
         key=lambda s: (s.hot_money_net_buy_million, s.narrative_score, s.volume_ratio),
@@ -20,6 +26,11 @@ def pick_hotmoney_signals(stocks: list[StockSnapshot], limit: int = 5) -> list[S
                 + stock.volume_ratio * 10,
                 1,
             ),
+        )
+        resonance_score, resonance_level, resonance_role, resonance_reasons = compute_resonance_score(
+            stock,
+            market,
+            theme_heat,
         )
         result.append(
             StrategySignal(
@@ -40,6 +51,10 @@ def pick_hotmoney_signals(stocks: list[StockSnapshot], limit: int = 5) -> list[S
                 theme=stock.theme,
                 secondary_theme=stock.secondary_theme,
                 concepts=stock.concepts,
+                resonance_score=resonance_score,
+                resonance_level=resonance_level,
+                resonance_role=resonance_role,
+                resonance_reasons=resonance_reasons,
             )
         )
     return result
