@@ -58,3 +58,8 @@ class DailyReport(BaseModel):
     top_signals: list[StrategySignal]
     summary_cn: str
     summary_en: str
+    mainline_themes: list[str] = []
+    focus_candidates: list[str] = []
+    observe_candidates: list[str] = []
+    avoid_candidates: list[str] = []
+    tomorrow_plan: list[str] = []

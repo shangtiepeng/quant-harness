@@ -274,6 +274,38 @@ export default function Page() {
           <Card title="Daily Report">
             <Paragraph>{data.report?.summary_cn || '暂无摘要'}</Paragraph>
             <Paragraph type="secondary">{data.report?.summary_en || ''}</Paragraph>
+            <Space direction="vertical" size={8} style={{ width: '100%', marginTop: 12 }}>
+              <Text strong>主线题材</Text>
+              <Space wrap>
+                {(data.report?.mainline_themes || []).map((item: string) => (
+                  <Tag key={`mainline-${item}`} color="red">{item}</Tag>
+                ))}
+              </Space>
+              <Text strong>强共振候选</Text>
+              <Space wrap>
+                {(data.report?.focus_candidates || []).map((item: string) => (
+                  <Tag key={`focus-${item}`} color="volcano">{item}</Tag>
+                ))}
+              </Space>
+              <Text strong>观察名单</Text>
+              <Space wrap>
+                {(data.report?.observe_candidates || []).map((item: string) => (
+                  <Tag key={`observe-${item}`} color="gold">{item}</Tag>
+                ))}
+              </Space>
+              <Text strong>回避名单</Text>
+              <Space wrap>
+                {(data.report?.avoid_candidates || []).map((item: string) => (
+                  <Tag key={`avoid-${item}`} color="default">{item}</Tag>
+                ))}
+              </Space>
+              <Text strong>明日计划</Text>
+              <ul style={{ margin: 0, paddingLeft: 20 }}>
+                {(data.report?.tomorrow_plan || []).map((item: string, idx: number) => (
+                  <li key={`plan-${idx}`}>{item}</li>
+                ))}
+              </ul>
+            </Space>
           </Card>
 
           <Card title="题材热度榜">

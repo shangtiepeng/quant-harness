@@ -64,8 +64,22 @@ def _to_markdown(result: dict[str, Any]) -> str:
         "## English Summary",
         report["summary_en"],
         "",
-        "## Top Signals",
+        "## 结构化日报",
+        f"- 主线题材: {'、'.join(report.get('mainline_themes', [])) or '暂无'}",
+        f"- 强共振候选: {'、'.join(report.get('focus_candidates', [])) or '暂无'}",
+        f"- 观察名单: {'、'.join(report.get('observe_candidates', [])) or '暂无'}",
+        f"- 回避名单: {'、'.join(report.get('avoid_candidates', [])) or '暂无'}",
+        "",
+        "### 明日计划",
     ]
+
+    for item in report.get('tomorrow_plan', []):
+        lines.append(f"- {item}")
+
+    lines.extend([
+        "",
+        "## Top Signals",
+    ])
 
     for signal in report.get("top_signals", []):
         lines.extend(
