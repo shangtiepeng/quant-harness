@@ -38,6 +38,8 @@ def pick_hotmoney_signals(stocks: list[StockSnapshot], limit: int = 5) -> list[S
                 exit_note="若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
                 invalidation_note="若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
                 theme=stock.theme,
+                secondary_theme=stock.secondary_theme,
+                concepts=stock.concepts,
             )
         )
     return result

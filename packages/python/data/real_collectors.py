@@ -70,7 +70,7 @@ def simplify_board_name(board_name: str) -> str:
     replacements = {
         '医药生物': '医药',
         '化学制药': '医药',
-        '原料药': '医药',
+        '原料药': '原料药',
         '电网设备': '电力设备',
         '通用设备': '高端制造',
         '专用设备': '高端制造',
@@ -78,7 +78,7 @@ def simplify_board_name(board_name: str) -> str:
     return replacements.get(board_name, board_name)
 
 
-def fetch_professional_theme(symbol: str, client: httpx.Client) -> str | None:
+def fetch_professional_concepts(symbol: str, client: httpx.Client) -> list[str]:
     market = get_market_prefix(symbol)
     url = f'https://emweb.securities.eastmoney.com/PC_HSF10/CoreConception/PageAjax?code={market}{symbol}'
     try:
@@ -93,21 +93,24 @@ def fetch_professional_theme(symbol: str, client: httpx.Client) -> str | None:
         payload = res.json()
         boards = payload.get('ssbk') or []
         cleaned: list[str] = []
+        seen: set[str] = set()
         for item in boards:
             board_name = str(item.get('BOARD_NAME', '')).strip()
             if not board_name or should_exclude_board(board_name):
                 continue
-            cleaned.append(simplify_board_name(board_name))
-        if cleaned:
-            return cleaned[0]
+            normalized = simplify_board_name(board_name)
+            if normalized in seen:
+                continue
+            seen.add(normalized)
+            cleaned.append(normalized)
+        return cleaned
     except Exception:
-        return None
-    return None
+        return []
 
 
-def _normalize_records(records: list[dict[str, Any]], professional_theme_map: dict[str, str] | None = None) -> list[StockSnapshot]:
+def _normalize_records(records: list[dict[str, Any]], professional_concept_map: dict[str, list[str]] | None = None) -> list[StockSnapshot]:
     result: list[StockSnapshot] = []
-    professional_theme_map = professional_theme_map or {}
+    professional_concept_map = professional_concept_map or {}
     for item in records:
         pct = float(item.get('涨跌幅', item.get('pct_change', 0)) or 0)
         turnover = float(item.get('换手率', item.get('turnover_rate', 0)) or 0)
@@ -116,13 +119,17 @@ def _normalize_records(records: list[dict[str, Any]], professional_theme_map: di
         name = str(item.get('名称', item.get('name', '未知标的')))
         raw_theme = item.get('theme')
         theme = str(raw_theme).strip() if raw_theme not in (None, '') else ''
+        concepts = professional_concept_map.get(symbol, [])
         if not theme or theme == '未分类':
-            theme = professional_theme_map.get(symbol) or infer_theme(name, symbol)
+            theme = concepts[0] if concepts else infer_theme(name, symbol)
+        secondary_theme = concepts[1] if len(concepts) > 1 else ''
         result.append(
             StockSnapshot(
                 symbol=symbol,
                 name=name,
                 theme=theme,
+                secondary_theme=secondary_theme,
+                concepts=concepts,
                 close=float(item.get('最新价', item.get('close', 0)) or 0),
                 pct_change=pct,
                 volume_ratio=volume_ratio,
@@ -189,13 +196,13 @@ def try_fetch_with_eastmoney(limit: int = 50) -> tuple[list[StockSnapshot], str]
                     }
                 )
 
-            professional_theme_map: dict[str, str] = {}
+            professional_concept_map: dict[str, list[str]] = {}
             for symbol in symbols[: min(len(symbols), 20)]:
-                theme = fetch_professional_theme(symbol, client)
-                if theme:
-                    professional_theme_map[symbol] = theme
+                concepts = fetch_professional_concepts(symbol, client)
+                if concepts:
+                    professional_concept_map[symbol] = concepts
 
-            stocks = _normalize_records(records, professional_theme_map=professional_theme_map)
+            stocks = _normalize_records(records, professional_concept_map=professional_concept_map)
             return stocks, 'eastmoney'
     except Exception:
         return [], 'eastmoney_unavailable'

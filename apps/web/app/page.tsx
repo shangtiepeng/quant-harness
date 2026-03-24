@@ -31,6 +31,8 @@ type SignalRow = {
   exit_note: string
   invalidation_note: string
   theme: string
+  secondary_theme?: string
+  concepts?: string[]
   display: string
 }
 
@@ -56,12 +58,13 @@ export default function Page() {
     runs: [],
     validations: [],
     performance: [],
+    themeHeat: [],
   })
   const [selectedSignalKey, setSelectedSignalKey] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes] = await Promise.all([
+      const [metaRes, marketRes, signalsRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
         fetch('http://127.0.0.1:8010/api/meta'),
         fetch('http://127.0.0.1:8010/api/market/overview'),
         fetch('http://127.0.0.1:8010/api/signals'),
@@ -69,7 +72,9 @@ export default function Page() {
         fetch('http://127.0.0.1:8010/api/history/runs'),
         fetch('http://127.0.0.1:8010/api/history/validations'),
         fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
+        fetch('http://127.0.0.1:8010/api/themes/heat'),
       ])
+      const themeHeatPayload = await themeHeatRes.json()
       const nextData = {
         meta: await metaRes.json(),
         market: await marketRes.json(),
@@ -78,6 +83,7 @@ export default function Page() {
         runs: await runsRes.json(),
         validations: await validationsRes.json(),
         performance: await perfRes.json(),
+        themeHeat: themeHeatPayload.items || [],
       }
       setData(nextData)
     }
@@ -113,10 +119,16 @@ export default function Page() {
       render: (v: string) => <Tag color="blue">{strategyLabelMap[v] || v}</Tag>,
     },
     {
-      title: '题材',
+      title: '主题材',
       dataIndex: 'theme',
       key: 'theme',
       render: (v: string) => <Tag color="gold">{v || '未分类'}</Tag>,
+    },
+    {
+      title: '次题材',
+      dataIndex: 'secondary_theme',
+      key: 'secondary_theme',
+      render: (v: string) => <Tag color="lime">{v || '-'}</Tag>,
     },
     { title: '分数', dataIndex: 'score', key: 'score' },
     {
@@ -152,9 +164,27 @@ export default function Page() {
     { title: 'Win Rate 1D', dataIndex: 'win_rate_1d', key: 'win_rate_1d' },
   ]
 
+  const themeHeatColumns = [
+    { title: '题材', dataIndex: 'theme', key: 'theme', render: (v: string) => <Tag color="volcano">{v}</Tag> },
+    { title: '热度', dataIndex: 'count', key: 'count' },
+    {
+      title: '代表个股',
+      dataIndex: 'leaders',
+      key: 'leaders',
+      render: (leaders: string[]) => (
+        <Space wrap>
+          {(leaders || []).map((item) => (
+            <Tag key={item}>{item}</Tag>
+          ))}
+        </Space>
+      ),
+    },
+  ]
+
   const runs = data.runs.map((r: any) => ({ ...r, key: r.id }))
   const validations = data.validations.map((r: any) => ({ ...r, key: r.id, display: `${r.name} (${r.symbol})` }))
   const performance = data.performance.map((r: any) => ({ ...r, key: r.strategy }))
+  const themeHeat = data.themeHeat.map((r: any) => ({ ...r, key: r.theme }))
 
   return (
     <Layout>
@@ -185,6 +215,10 @@ export default function Page() {
             <Paragraph type="secondary">{data.report?.summary_en || ''}</Paragraph>
           </Card>
 
+          <Card title="题材热度榜">
+            <Table columns={themeHeatColumns} dataSource={themeHeat} pagination={false} />
+          </Card>
+
           <Row gutter={16} align="stretch">
             <Col span={14}>
               <Card title="Top Signals">
@@ -213,14 +247,18 @@ export default function Page() {
 
                     <Space wrap>
                       <Tag color="blue">{strategyLabelMap[selectedSignal.strategy] || selectedSignal.strategy}</Tag>
-                      <Tag color="gold">题材：{selectedSignal.theme || '未分类'}</Tag>
+                      <Tag color="gold">主题材：{selectedSignal.theme || '未分类'}</Tag>
+                      <Tag color="lime">次题材：{selectedSignal.secondary_theme || '-'}</Tag>
                       <Tag color={riskColorMap[selectedSignal.risk_level] || 'default'}>风险：{selectedSignal.risk_level}</Tag>
                       <Tag color="purple">分数：{selectedSignal.score}</Tag>
                     </Space>
 
                     <Descriptions column={1} size="small" bordered>
-                      <Descriptions.Item label="核心题材">
+                      <Descriptions.Item label="主题材">
                         {selectedSignal.theme || '未分类'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="次题材">
+                        {selectedSignal.secondary_theme || '-'}
                       </Descriptions.Item>
                       <Descriptions.Item label="入场说明">
                         {selectedSignal.entry_note}
@@ -232,6 +270,18 @@ export default function Page() {
                         {selectedSignal.invalidation_note}
                       </Descriptions.Item>
                     </Descriptions>
+
+                    <div>
+                      <Text strong>概念列表</Text>
+                      <Divider style={{ margin: '8px 0 12px' }} />
+                      <Space wrap>
+                        {(selectedSignal.concepts || []).slice(0, 8).map((concept) => (
+                          <Tag key={`${selectedSignal.key}-${concept}`} color="cyan">
+                            {concept}
+                          </Tag>
+                        ))}
+                      </Space>
+                    </div>
 
                     <div>
                       <Text strong>核心理由</Text>

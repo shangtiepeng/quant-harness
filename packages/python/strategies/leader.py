@@ -46,6 +46,8 @@ def pick_leader_signals(stocks: list[StockSnapshot], limit: int = 5) -> list[Str
                 exit_note="次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
                 invalidation_note="若高开低走且失去板块带动性，则该信号失效。",
                 theme=stock.theme,
+                secondary_theme=stock.secondary_theme,
+                concepts=stock.concepts,
             )
         )
     return result

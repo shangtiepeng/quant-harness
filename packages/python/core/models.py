@@ -8,6 +8,8 @@ class StockSnapshot(BaseModel):
     symbol: str
     name: str
     theme: str
+    secondary_theme: str = ""
+    concepts: list[str] = []
     close: float
     pct_change: float
     volume_ratio: float
@@ -32,6 +34,8 @@ class StrategySignal(BaseModel):
     exit_note: str
     invalidation_note: str
     theme: str
+    secondary_theme: str = ""
+    concepts: list[str] = []
 
 
 class MarketOverview(BaseModel):

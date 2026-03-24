@@ -15,6 +15,8 @@ from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
+from collections import Counter
+
 from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
@@ -60,6 +62,33 @@ def debug_raw_market(limit: int = 20):
 def signals():
     payload = run_pipeline()
     return payload["signals"]
+
+
+@app.get("/api/themes/heat")
+def themes_heat(limit: int = 10):
+    stocks, meta = load_market_data(limit=50)
+    counter: Counter[str] = Counter()
+    leaders: dict[str, list[str]] = {}
+    for stock in stocks:
+        concepts = stock.concepts or ([stock.theme] if stock.theme else [])
+        for concept in concepts[:3]:
+            if not concept or concept == '题材待补全':
+                continue
+            counter[concept] += 1
+            leaders.setdefault(concept, [])
+            if len(leaders[concept]) < 3:
+                leaders[concept].append(f"{stock.name}({stock.symbol})")
+    return {
+        "meta": meta,
+        "items": [
+            {
+                "theme": theme,
+                "count": count,
+                "leaders": leaders.get(theme, []),
+            }
+            for theme, count in counter.most_common(limit)
+        ],
+    }
 
 
 @app.get("/api/report/daily")
