@@ -1,11 +1,51 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Card, Col, Layout, Row, Space, Statistic, Table, Tag, Typography } from 'antd'
+import {
+  Card,
+  Col,
+  Descriptions,
+  Divider,
+  Layout,
+  Row,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Typography,
+} from 'antd'
 
 const { Header, Content } = Layout
-const { Title, Paragraph } = Typography
+const { Title, Paragraph, Text } = Typography
+
+type SignalRow = {
+  key: string
+  strategy: string
+  symbol: string
+  name: string
+  score: number
+  risk_level: string
+  reasons: string[]
+  entry_note: string
+  exit_note: string
+  invalidation_note: string
+  theme: string
+  display: string
+}
+
+const strategyLabelMap: Record<string, string> = {
+  leader: '龙头',
+  hotmoney: '游资',
+  sentiment: '情绪',
+  composite: '综合',
+}
+
+const riskColorMap: Record<string, string> = {
+  low: 'green',
+  medium: 'orange',
+  high: 'red',
+}
 
 export default function Page() {
   const [data, setData] = useState<any>({
@@ -17,6 +57,7 @@ export default function Page() {
     validations: [],
     performance: [],
   })
+  const [selectedSignalKey, setSelectedSignalKey] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -29,7 +70,7 @@ export default function Page() {
         fetch('http://127.0.0.1:8010/api/history/validations'),
         fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
       ])
-      setData({
+      const nextData = {
         meta: await metaRes.json(),
         market: await marketRes.json(),
         signals: await signalsRes.json(),
@@ -37,17 +78,53 @@ export default function Page() {
         runs: await runsRes.json(),
         validations: await validationsRes.json(),
         performance: await perfRes.json(),
-      })
+      }
+      setData(nextData)
     }
     load()
   }, [])
 
+  const signals: SignalRow[] = useMemo(() => {
+    return data.signals.map((r: any, i: number) => ({
+      ...r,
+      key: `${r.strategy}-${r.symbol}-${i}`,
+      display: `${r.name} (${r.symbol})`,
+    }))
+  }, [data.signals])
+
+  useEffect(() => {
+    if (!signals.length) {
+      setSelectedSignalKey(null)
+      return
+    }
+    if (!selectedSignalKey || !signals.find((item) => item.key === selectedSignalKey)) {
+      setSelectedSignalKey(signals[0].key)
+    }
+  }, [signals, selectedSignalKey])
+
+  const selectedSignal = signals.find((item) => item.key === selectedSignalKey) || null
+
   const signalColumns = [
     { title: '标的', dataIndex: 'display', key: 'display' },
-    { title: '策略', dataIndex: 'strategy', key: 'strategy', render: (v: string) => <Tag color="blue">{v}</Tag> },
-    { title: '题材', dataIndex: 'theme', key: 'theme' },
+    {
+      title: '策略',
+      dataIndex: 'strategy',
+      key: 'strategy',
+      render: (v: string) => <Tag color="blue">{strategyLabelMap[v] || v}</Tag>,
+    },
+    {
+      title: '题材',
+      dataIndex: 'theme',
+      key: 'theme',
+      render: (v: string) => <Tag color="gold">{v || '未分类'}</Tag>,
+    },
     { title: '分数', dataIndex: 'score', key: 'score' },
-    { title: '风险', dataIndex: 'risk_level', key: 'risk_level', render: (v: string) => <Tag color={v === 'high' ? 'red' : 'orange'}>{v}</Tag> },
+    {
+      title: '风险',
+      dataIndex: 'risk_level',
+      key: 'risk_level',
+      render: (v: string) => <Tag color={riskColorMap[v] || 'default'}>{v}</Tag>,
+    },
   ]
 
   const runColumns = [
@@ -75,7 +152,6 @@ export default function Page() {
     { title: 'Win Rate 1D', dataIndex: 'win_rate_1d', key: 'win_rate_1d' },
   ]
 
-  const signals = data.signals.map((r: any, i: number) => ({ ...r, key: `${r.strategy}-${r.symbol}-${i}`, display: `${r.name} (${r.symbol})` }))
   const runs = data.runs.map((r: any) => ({ ...r, key: r.id }))
   const validations = data.validations.map((r: any) => ({ ...r, key: r.id, display: `${r.name} (${r.symbol})` }))
   const performance = data.performance.map((r: any) => ({ ...r, key: r.strategy }))
@@ -93,8 +169,8 @@ export default function Page() {
       <Content style={{ padding: 24 }}>
         <Space direction="vertical" size={16} style={{ width: '100%' }}>
           <Card>
-            <Title level={2}>Quant Harness Dashboard</Title>
-            <Paragraph>研究优先的 A 股战法系统 MVP</Paragraph>
+            <Title level={2} style={{ marginBottom: 8 }}>Quant Harness Dashboard</Title>
+            <Paragraph style={{ marginBottom: 0 }}>研究优先的 A 股战法系统 MVP</Paragraph>
           </Card>
 
           <Row gutter={16}>
@@ -109,9 +185,74 @@ export default function Page() {
             <Paragraph type="secondary">{data.report?.summary_en || ''}</Paragraph>
           </Card>
 
-          <Card title="Top Signals">
-            <Table columns={signalColumns} dataSource={signals} pagination={{ pageSize: 5 }} />
-          </Card>
+          <Row gutter={16} align="stretch">
+            <Col span={14}>
+              <Card title="Top Signals">
+                <Table
+                  columns={signalColumns}
+                  dataSource={signals}
+                  pagination={{ pageSize: 6 }}
+                  rowClassName={(record: SignalRow) =>
+                    record.key === selectedSignalKey ? 'selected-signal-row' : ''
+                  }
+                  onRow={(record: SignalRow) => ({
+                    onClick: () => setSelectedSignalKey(record.key),
+                    style: { cursor: 'pointer' },
+                  })}
+                />
+              </Card>
+            </Col>
+            <Col span={10}>
+              <Card title="选中核心说明" style={{ height: '100%' }}>
+                {selectedSignal ? (
+                  <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                    <div>
+                      <Title level={4} style={{ marginBottom: 4 }}>{selectedSignal.name}</Title>
+                      <Text type="secondary">{selectedSignal.symbol}</Text>
+                    </div>
+
+                    <Space wrap>
+                      <Tag color="blue">{strategyLabelMap[selectedSignal.strategy] || selectedSignal.strategy}</Tag>
+                      <Tag color="gold">题材：{selectedSignal.theme || '未分类'}</Tag>
+                      <Tag color={riskColorMap[selectedSignal.risk_level] || 'default'}>风险：{selectedSignal.risk_level}</Tag>
+                      <Tag color="purple">分数：{selectedSignal.score}</Tag>
+                    </Space>
+
+                    <Descriptions column={1} size="small" bordered>
+                      <Descriptions.Item label="核心题材">
+                        {selectedSignal.theme || '未分类'}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="入场说明">
+                        {selectedSignal.entry_note}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="退出说明">
+                        {selectedSignal.exit_note}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="失效条件">
+                        {selectedSignal.invalidation_note}
+                      </Descriptions.Item>
+                    </Descriptions>
+
+                    <div>
+                      <Text strong>核心理由</Text>
+                      <Divider style={{ margin: '8px 0 12px' }} />
+                      <Space wrap>
+                        {selectedSignal.reasons?.map((reason, idx) => (
+                          <Tag key={`${selectedSignal.key}-reason-${idx}`} color="geekblue">
+                            {reason}
+                          </Tag>
+                        ))}
+                      </Space>
+                    </div>
+                  </Space>
+                ) : (
+                  <Paragraph type="secondary" style={{ marginBottom: 0 }}>
+                    点击左侧信号行后，这里会显示对应标的的核心说明、题材和交易要点。
+                  </Paragraph>
+                )}
+              </Card>
+            </Col>
+          </Row>
 
           <Card title="Historical Runs">
             <Table columns={runColumns} dataSource={runs} pagination={{ pageSize: 5 }} />
