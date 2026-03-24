@@ -71,6 +71,12 @@ def candidates():
     return payload["candidates"]
 
 
+@app.get("/api/portfolio-plan")
+def portfolio_plan():
+    payload = run_pipeline()
+    return payload["portfolio_plan"]
+
+
 @app.get("/api/themes/heat")
 def themes_heat(limit: int = 10):
     stocks, meta = load_market_data(limit=50)

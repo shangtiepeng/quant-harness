@@ -74,6 +74,7 @@ export default function Page() {
     market: null,
     signals: [],
     candidates: [],
+    portfolioPlan: null,
     report: null,
     runs: [],
     validations: [],
@@ -84,11 +85,12 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, candidatesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
+      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
         fetch('http://127.0.0.1:8010/api/meta'),
         fetch('http://127.0.0.1:8010/api/market/overview'),
         fetch('http://127.0.0.1:8010/api/signals'),
         fetch('http://127.0.0.1:8010/api/candidates'),
+        fetch('http://127.0.0.1:8010/api/portfolio-plan'),
         fetch('http://127.0.0.1:8010/api/report/daily'),
         fetch('http://127.0.0.1:8010/api/history/runs'),
         fetch('http://127.0.0.1:8010/api/history/validations'),
@@ -101,6 +103,7 @@ export default function Page() {
         market: await marketRes.json(),
         signals: await signalsRes.json(),
         candidates: await candidatesRes.json(),
+        portfolioPlan: await portfolioPlanRes.json(),
         report: await reportRes.json(),
         runs: await runsRes.json(),
         validations: await validationsRes.json(),
@@ -270,6 +273,40 @@ export default function Page() {
             <Col span={6}><Card><Statistic title="Sentiment" value={data.market?.market_sentiment_stage || 'N/A'} /></Card></Col>
             <Col span={6}><Card><Statistic title="Highest Board" value={data.market?.highest_board || 0} /></Card></Col>
           </Row>
+
+          <Card title="今日策略组合建议">
+            <Row gutter={16}>
+              <Col span={6}><Statistic title="Risk Mode" value={data.portfolioPlan?.risk_mode || 'N/A'} /></Col>
+              <Col span={6}><Statistic title="Risk Budget" value={data.portfolioPlan?.risk_budget_pct || 0} suffix="%" /></Col>
+              <Col span={6}><Statistic title="No Trade" value={data.portfolioPlan?.no_trade ? 'YES' : 'NO'} /></Col>
+              <Col span={6}><Statistic title="Plan Count" value={(data.portfolioPlan?.candidate_plan || []).length} /></Col>
+            </Row>
+            <Divider />
+            <Text strong>启用策略</Text>
+            <Space wrap style={{ marginTop: 8, marginBottom: 12 }}>
+              {(data.portfolioPlan?.strategy_weights || []).map((item: any) => (
+                <Tag key={`sw-${item.strategy}`} color="blue">{item.label}: {item.weight_pct}%</Tag>
+              ))}
+            </Space>
+            <Text strong>组合备注</Text>
+            <ul style={{ marginTop: 8, paddingLeft: 20 }}>
+              {(data.portfolioPlan?.notes || []).map((item: string, idx: number) => (
+                <li key={`note-${idx}`}>{item}</li>
+              ))}
+            </ul>
+            <Divider />
+            <Table
+              pagination={false}
+              dataSource={(data.portfolioPlan?.candidate_plan || []).map((item: any) => ({ ...item, key: item.symbol }))}
+              columns={[
+                { title: '标的', dataIndex: 'display', key: 'display' },
+                { title: '目标仓位', dataIndex: 'target_weight_pct', key: 'target_weight_pct', render: (v: number) => `${v}%` },
+                { title: '共振等级', dataIndex: 'resonance_level', key: 'resonance_level' },
+                { title: '主题材', dataIndex: 'theme', key: 'theme' },
+                { title: '策略共识', dataIndex: 'strategies', key: 'strategies', render: (values: string[]) => (values || []).map((v) => strategyLabelMap[v] || v).join(' / ') },
+              ]}
+            />
+          </Card>
 
           <Card title="Daily Report">
             <Paragraph>{data.report?.summary_cn || '暂无摘要'}</Paragraph>
