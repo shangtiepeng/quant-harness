@@ -16,6 +16,7 @@ from packages.python.execution.pipeline import run_pipeline
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.validation import validate_run
+from packages.python.data.real_collectors import load_market_data
 
 
 app = FastAPI(title="Quant Harness API", version="0.6.0")
@@ -44,6 +45,15 @@ def meta():
 def market_overview():
     payload = run_pipeline()
     return payload["market"]
+
+
+@app.get("/api/debug/raw-market")
+def debug_raw_market(limit: int = 20):
+    stocks, meta = load_market_data(limit=limit)
+    return {
+        "meta": meta,
+        "items": [s.model_dump() for s in stocks],
+    }
 
 
 @app.get("/api/signals")
