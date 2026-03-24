@@ -34,6 +34,19 @@ THEME_KEYWORDS: list[tuple[str, str]] = [
     ('汽车', '汽车'),
 ]
 
+THEME_EXCLUDE_KEYWORDS = [
+    '板块',
+    '融资融券',
+    '深股通',
+    '沪股通',
+    '机构重仓',
+    '创业板综',
+    '上证380',
+    '标准普尔',
+    'MSCI',
+    '东方财富热股',
+]
+
 
 def infer_theme(name: str, symbol: str = '') -> str:
     text = f'{name}{symbol}'
@@ -43,8 +56,58 @@ def infer_theme(name: str, symbol: str = '') -> str:
     return '题材待补全'
 
 
-def _normalize_records(records: list[dict[str, Any]]) -> list[StockSnapshot]:
+def get_market_prefix(symbol: str) -> str:
+    if symbol.startswith(('600', '601', '603', '605', '688')):
+        return 'SH'
+    return 'SZ'
+
+
+def should_exclude_board(board_name: str) -> bool:
+    return any(keyword in board_name for keyword in THEME_EXCLUDE_KEYWORDS)
+
+
+def simplify_board_name(board_name: str) -> str:
+    replacements = {
+        '医药生物': '医药',
+        '化学制药': '医药',
+        '原料药': '医药',
+        '电网设备': '电力设备',
+        '通用设备': '高端制造',
+        '专用设备': '高端制造',
+    }
+    return replacements.get(board_name, board_name)
+
+
+def fetch_professional_theme(symbol: str, client: httpx.Client) -> str | None:
+    market = get_market_prefix(symbol)
+    url = f'https://emweb.securities.eastmoney.com/PC_HSF10/CoreConception/PageAjax?code={market}{symbol}'
+    try:
+        res = client.get(
+            url,
+            headers={
+                'User-Agent': 'Mozilla/5.0',
+                'Referer': 'https://quote.eastmoney.com/',
+            },
+        )
+        res.raise_for_status()
+        payload = res.json()
+        boards = payload.get('ssbk') or []
+        cleaned: list[str] = []
+        for item in boards:
+            board_name = str(item.get('BOARD_NAME', '')).strip()
+            if not board_name or should_exclude_board(board_name):
+                continue
+            cleaned.append(simplify_board_name(board_name))
+        if cleaned:
+            return cleaned[0]
+    except Exception:
+        return None
+    return None
+
+
+def _normalize_records(records: list[dict[str, Any]], professional_theme_map: dict[str, str] | None = None) -> list[StockSnapshot]:
     result: list[StockSnapshot] = []
+    professional_theme_map = professional_theme_map or {}
     for item in records:
         pct = float(item.get('涨跌幅', item.get('pct_change', 0)) or 0)
         turnover = float(item.get('换手率', item.get('turnover_rate', 0)) or 0)
@@ -54,7 +117,7 @@ def _normalize_records(records: list[dict[str, Any]]) -> list[StockSnapshot]:
         raw_theme = item.get('theme')
         theme = str(raw_theme).strip() if raw_theme not in (None, '') else ''
         if not theme or theme == '未分类':
-            theme = infer_theme(name, symbol)
+            theme = professional_theme_map.get(symbol) or infer_theme(name, symbol)
         result.append(
             StockSnapshot(
                 symbol=symbol,
@@ -110,10 +173,14 @@ def try_fetch_with_eastmoney(limit: int = 50) -> tuple[list[StockSnapshot], str]
             payload = res.json()
             diff = payload.get('data', {}).get('diff', [])
             records = []
+            symbols: list[str] = []
             for item in diff:
+                symbol = str(item.get('f12') or '')
+                if symbol:
+                    symbols.append(symbol)
                 records.append(
                     {
-                        '代码': item.get('f12'),
+                        '代码': symbol,
                         '名称': item.get('f14'),
                         '最新价': item.get('f2', 0),
                         '涨跌幅': item.get('f3', 0),
@@ -121,7 +188,14 @@ def try_fetch_with_eastmoney(limit: int = 50) -> tuple[list[StockSnapshot], str]
                         '量比': item.get('f10', 1),
                     }
                 )
-            stocks = _normalize_records(records)
+
+            professional_theme_map: dict[str, str] = {}
+            for symbol in symbols[: min(len(symbols), 20)]:
+                theme = fetch_professional_theme(symbol, client)
+                if theme:
+                    professional_theme_map[symbol] = theme
+
+            stocks = _normalize_records(records, professional_theme_map=professional_theme_map)
             return stocks, 'eastmoney'
     except Exception:
         return [], 'eastmoney_unavailable'
