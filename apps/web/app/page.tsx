@@ -285,16 +285,18 @@ export default function Page() {
 
           <Card title="今日策略组合建议">
             <Row gutter={16}>
-              <Col span={6}><Statistic title="Risk Mode" value={data.portfolioPlan?.risk_mode || 'N/A'} /></Col>
-              <Col span={6}><Statistic title="Risk Budget" value={data.portfolioPlan?.risk_budget_pct || 0} suffix="%" /></Col>
-              <Col span={6}><Statistic title="No Trade" value={data.portfolioPlan?.no_trade ? 'YES' : 'NO'} /></Col>
-              <Col span={6}><Statistic title="Plan Count" value={(data.portfolioPlan?.candidate_plan || []).length} /></Col>
+              <Col span={4}><Statistic title="Risk Mode" value={data.portfolioPlan?.risk_mode || 'N/A'} /></Col>
+              <Col span={4}><Statistic title="Exec Policy" value={data.portfolioPlan?.execution_policy || 'N/A'} /></Col>
+              <Col span={4}><Statistic title="Risk Budget" value={data.portfolioPlan?.risk_budget_pct || 0} suffix="%" /></Col>
+              <Col span={4}><Statistic title="Max Positions" value={data.portfolioPlan?.max_positions || 0} /></Col>
+              <Col span={4}><Statistic title="Theme Cap" value={data.portfolioPlan?.max_theme_exposure_pct || 0} suffix="%" /></Col>
+              <Col span={4}><Statistic title="No Trade" value={data.portfolioPlan?.no_trade ? 'YES' : 'NO'} /></Col>
             </Row>
             <Divider />
             <Text strong>启用策略</Text>
             <Space wrap style={{ marginTop: 8, marginBottom: 12 }}>
               {(data.portfolioPlan?.strategy_weights || []).map((item: any) => (
-                <Tag key={`sw-${item.strategy}`} color="blue">{item.label}: {item.weight_pct}%</Tag>
+                <Tag key={`sw-${item.strategy}`} color="blue">{item.label}: 配置权重 {item.weight_pct}% / 计划暴露 {item.planned_pct}% / 上限 {item.cap_pct}%</Tag>
               ))}
             </Space>
             <Text strong>组合备注</Text>
