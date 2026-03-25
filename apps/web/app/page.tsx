@@ -103,20 +103,30 @@ export default function Page() {
         fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
         fetch('http://127.0.0.1:8010/api/themes/heat'),
       ])
-      const themeHeatPayload = await themeHeatRes.json()
+
+      const parseJsonOrFallback = async (res: Response, fallback: any) => {
+        if (!res.ok) return fallback
+        try {
+          return await res.json()
+        } catch {
+          return fallback
+        }
+      }
+
+      const themeHeatPayload = await parseJsonOrFallback(themeHeatRes, { items: [] })
       const nextData = {
-        meta: await metaRes.json(),
-        market: await marketRes.json(),
-        signals: await signalsRes.json(),
-        candidates: await candidatesRes.json(),
-        portfolioPlan: await portfolioPlanRes.json(),
-        paperSummary: await paperSummaryRes.json(),
-        paperPositions: await paperPositionsRes.json(),
-        paperTrades: await paperTradesRes.json(),
-        report: await reportRes.json(),
-        runs: await runsRes.json(),
-        validations: await validationsRes.json(),
-        performance: await perfRes.json(),
+        meta: await parseJsonOrFallback(metaRes, null),
+        market: await parseJsonOrFallback(marketRes, null),
+        signals: await parseJsonOrFallback(signalsRes, []),
+        candidates: await parseJsonOrFallback(candidatesRes, []),
+        portfolioPlan: await parseJsonOrFallback(portfolioPlanRes, null),
+        paperSummary: await parseJsonOrFallback(paperSummaryRes, null),
+        paperPositions: await parseJsonOrFallback(paperPositionsRes, []),
+        paperTrades: await parseJsonOrFallback(paperTradesRes, []),
+        report: await parseJsonOrFallback(reportRes, null),
+        runs: await parseJsonOrFallback(runsRes, []),
+        validations: await parseJsonOrFallback(validationsRes, []),
+        performance: await parseJsonOrFallback(perfRes, []),
         themeHeat: themeHeatPayload.items || [],
       }
       setData(nextData)
