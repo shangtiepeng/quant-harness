@@ -9,6 +9,12 @@ from packages.python.storage import get_conn, init_db
 MAX_HOLD_DAYS = 5
 STOP_LOSS_PCT = -5.0
 TAKE_PROFIT_PCT = 12.0
+RISK_MODE_HOLD_LIMIT = {
+    'defensive_probe': 3,
+    'risk_control': 4,
+    'selective_attack': 5,
+    'active_attack': 5,
+}
 
 
 def _find_candidate_price(symbol: str, stocks: list[dict[str, Any]]) -> float:
@@ -22,9 +28,24 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
     init_db()
     trade_date = payload['trade_date']
     plan = payload.get('portfolio_plan') or {}
+    risk_mode = str(plan.get('risk_mode') or 'defensive_probe')
+    execution_policy = str(plan.get('execution_policy') or 'paper_only')
+    market_stage = str(payload.get('market', {}).get('market_sentiment_stage') or 'ice')
     opened: list[dict[str, Any]] = []
     closed: list[dict[str, Any]] = []
     rebalanced: list[dict[str, Any]] = []
+
+    if execution_policy not in {'paper_only', 'semi_auto'}:
+        return {
+            'opened': [],
+            'closed': [],
+            'rebalanced': [],
+            'opened_count': 0,
+            'closed_count': 0,
+            'rebalanced_count': 0,
+            'execution_skipped': True,
+            'execution_policy': execution_policy,
+        }
 
     with get_conn() as conn:
         open_positions = conn.execute(
@@ -40,10 +61,34 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
             entry_price = float(position['entry_price'])
             ret_pct = round((current_price / entry_price - 1) * 100, 2)
             hold_days = max(0, int(trade_date.replace('-', '')) - int(position['opened_trade_date'].replace('-', '')))
+            hold_limit = RISK_MODE_HOLD_LIMIT.get(risk_mode, MAX_HOLD_DAYS)
             removed_from_plan = position['symbol'] not in planned_by_symbol
-            should_close = ret_pct <= STOP_LOSS_PCT or ret_pct >= TAKE_PROFIT_PCT or hold_days >= MAX_HOLD_DAYS or removed_from_plan
+            planned = planned_by_symbol.get(position['symbol'])
+            resonance_drop = bool(planned) and planned.get('resonance_level') in {'C', 'D'}
+            role_break = bool(planned) and planned.get('role') in {'noise', 'follower'} and risk_mode in {'defensive_probe', 'risk_control'}
+            should_close = (
+                ret_pct <= STOP_LOSS_PCT
+                or ret_pct >= TAKE_PROFIT_PCT
+                or hold_days >= hold_limit
+                or removed_from_plan
+                or resonance_drop
+                or role_break
+            )
             if should_close:
-                exit_note = 'paper_rebalance_exit' if removed_from_plan else 'paper_exit'
+                if removed_from_plan:
+                    exit_note = 'paper_rebalance_exit'
+                elif resonance_drop:
+                    exit_note = 'paper_resonance_exit'
+                elif role_break:
+                    exit_note = 'paper_riskmode_exit'
+                elif hold_days >= hold_limit:
+                    exit_note = 'paper_time_exit'
+                elif ret_pct <= STOP_LOSS_PCT:
+                    exit_note = 'paper_stop_loss'
+                elif ret_pct >= TAKE_PROFIT_PCT:
+                    exit_note = 'paper_take_profit'
+                else:
+                    exit_note = 'paper_exit'
                 conn.execute(
                     """
                     UPDATE paper_positions
@@ -128,6 +173,10 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
         'opened_count': len(opened),
         'closed_count': len(closed),
         'rebalanced_count': len(rebalanced),
+        'execution_skipped': False,
+        'execution_policy': execution_policy,
+        'risk_mode': risk_mode,
+        'market_stage': market_stage,
     }
 
 

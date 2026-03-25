@@ -58,6 +58,9 @@ export default function RunJobPage() {
                 <Descriptions.Item label="Validation Count">{result.validation_count}</Descriptions.Item>
                 <Descriptions.Item label="Paper Opened">{result.paper_execution?.opened_count ?? 0}</Descriptions.Item>
                 <Descriptions.Item label="Paper Closed">{result.paper_execution?.closed_count ?? 0}</Descriptions.Item>
+                <Descriptions.Item label="Paper Rebalanced">{result.paper_execution?.rebalanced_count ?? 0}</Descriptions.Item>
+                <Descriptions.Item label="Execution Policy">{result.paper_execution?.execution_policy ?? 'N/A'}</Descriptions.Item>
+                <Descriptions.Item label="Risk Mode">{result.paper_execution?.risk_mode ?? 'N/A'}</Descriptions.Item>
                 <Descriptions.Item label="JSON Archive">{result.archive?.json_path}</Descriptions.Item>
                 <Descriptions.Item label="Markdown Archive">{result.archive?.md_path}</Descriptions.Item>
               </Descriptions>

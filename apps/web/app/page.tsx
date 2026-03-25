@@ -292,6 +292,9 @@ export default function Page() {
               <Col span={4}><Statistic title="Theme Cap" value={data.portfolioPlan?.max_theme_exposure_pct || 0} suffix="%" /></Col>
               <Col span={4}><Statistic title="No Trade" value={data.portfolioPlan?.no_trade ? 'YES' : 'NO'} /></Col>
             </Row>
+            <div style={{ marginTop: 12 }}>
+              <Text type="secondary">当前执行模式决定了系统只做模拟、仅建议，还是允许未来升级到半自动/自动。</Text>
+            </div>
             <Divider />
             <Text strong>启用策略</Text>
             <Space wrap style={{ marginTop: 8, marginBottom: 12 }}>
