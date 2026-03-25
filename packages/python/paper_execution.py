@@ -24,11 +24,13 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
     plan = payload.get('portfolio_plan') or {}
     opened: list[dict[str, Any]] = []
     closed: list[dict[str, Any]] = []
+    rebalanced: list[dict[str, Any]] = []
 
     with get_conn() as conn:
         open_positions = conn.execute(
             "SELECT * FROM paper_positions WHERE status = 'open' ORDER BY id ASC"
         ).fetchall()
+        planned_by_symbol = {item['symbol']: item for item in (plan.get('candidate_plan') or [])}
 
         for row in open_positions:
             position = dict(row)
@@ -38,8 +40,10 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
             entry_price = float(position['entry_price'])
             ret_pct = round((current_price / entry_price - 1) * 100, 2)
             hold_days = max(0, int(trade_date.replace('-', '')) - int(position['opened_trade_date'].replace('-', '')))
-            should_close = ret_pct <= STOP_LOSS_PCT or ret_pct >= TAKE_PROFIT_PCT or hold_days >= MAX_HOLD_DAYS
+            removed_from_plan = position['symbol'] not in planned_by_symbol
+            should_close = ret_pct <= STOP_LOSS_PCT or ret_pct >= TAKE_PROFIT_PCT or hold_days >= MAX_HOLD_DAYS or removed_from_plan
             if should_close:
+                exit_note = 'paper_rebalance_exit' if removed_from_plan else 'paper_exit'
                 conn.execute(
                     """
                     UPDATE paper_positions
@@ -50,7 +54,7 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                 )
                 conn.execute(
                     "INSERT INTO paper_trades (trade_date, symbol, name, side, price, weight_pct, note) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (trade_date, position['symbol'], position['name'], 'sell', current_price, position['target_weight_pct'], 'paper_exit'),
+                    (trade_date, position['symbol'], position['name'], 'sell', current_price, position['target_weight_pct'], exit_note),
                 )
                 closed.append({
                     'symbol': position['symbol'],
@@ -58,6 +62,27 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                     'exit_price': current_price,
                     'realized_return_pct': ret_pct,
                 })
+                continue
+
+            planned = planned_by_symbol.get(position['symbol'])
+            if planned:
+                current_weight = float(position['target_weight_pct'])
+                target_weight = float(planned.get('target_weight_pct') or current_weight)
+                if abs(target_weight - current_weight) >= 4:
+                    conn.execute(
+                        "UPDATE paper_positions SET target_weight_pct = ?, plan_json = ? WHERE id = ?",
+                        (target_weight, json.dumps(planned, ensure_ascii=False), position['id']),
+                    )
+                    conn.execute(
+                        "INSERT INTO paper_trades (trade_date, symbol, name, side, price, weight_pct, note) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (trade_date, position['symbol'], position['name'], 'rebalance', current_price, target_weight, 'paper_rebalance_adjust'),
+                    )
+                    rebalanced.append({
+                        'symbol': position['symbol'],
+                        'name': position['name'],
+                        'from_weight_pct': current_weight,
+                        'to_weight_pct': target_weight,
+                    })
 
         existing_open = {
             row['symbol'] for row in conn.execute("SELECT symbol FROM paper_positions WHERE status = 'open'").fetchall()
@@ -99,8 +124,10 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
     return {
         'opened': opened,
         'closed': closed,
+        'rebalanced': rebalanced,
         'opened_count': len(opened),
         'closed_count': len(closed),
+        'rebalanced_count': len(rebalanced),
     }
 
 
@@ -121,3 +148,36 @@ def list_paper_trades(limit: int = 100) -> list[dict[str, Any]]:
             (limit,),
         ).fetchall()
         return [dict(row) for row in rows]
+
+
+def paper_portfolio_summary(stocks: list[dict[str, Any]]) -> dict[str, Any]:
+    positions = list_paper_positions()
+    trades = list_paper_trades(limit=500)
+
+    open_positions = [p for p in positions if p['status'] == 'open']
+    closed_positions = [p for p in positions if p['status'] == 'closed']
+
+    unrealized = 0.0
+    open_weight = 0.0
+    for position in open_positions:
+        current_price = _find_candidate_price(position['symbol'], stocks)
+        if current_price <= 0:
+            continue
+        entry_price = float(position['entry_price'])
+        ret_pct = (current_price / entry_price - 1) * 100
+        unrealized += ret_pct * float(position['target_weight_pct']) / 100
+        open_weight += float(position['target_weight_pct'])
+
+    realized = sum(float(p.get('realized_return_pct') or 0) * float(p.get('target_weight_pct') or 0) / 100 for p in closed_positions)
+    wins = sum(1 for p in closed_positions if float(p.get('realized_return_pct') or 0) > 0)
+
+    return {
+        'open_positions': len(open_positions),
+        'closed_positions': len(closed_positions),
+        'open_weight_pct': round(open_weight, 2),
+        'unrealized_pnl_pct': round(unrealized, 2),
+        'realized_pnl_pct': round(realized, 2),
+        'total_pnl_pct': round(unrealized + realized, 2),
+        'win_rate_pct': round(wins / max(len(closed_positions), 1) * 100, 2) if closed_positions else 0.0,
+        'trade_count': len(trades),
+    }

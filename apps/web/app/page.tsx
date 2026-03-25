@@ -75,6 +75,7 @@ export default function Page() {
     signals: [],
     candidates: [],
     portfolioPlan: null,
+    paperSummary: null,
     paperPositions: [],
     paperTrades: [],
     report: null,
@@ -87,12 +88,13 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, paperPositionsRes, paperTradesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
+      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, paperSummaryRes, paperPositionsRes, paperTradesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
         fetch('http://127.0.0.1:8010/api/meta'),
         fetch('http://127.0.0.1:8010/api/market/overview'),
         fetch('http://127.0.0.1:8010/api/signals'),
         fetch('http://127.0.0.1:8010/api/candidates'),
         fetch('http://127.0.0.1:8010/api/portfolio-plan'),
+        fetch('http://127.0.0.1:8010/api/paper/summary'),
         fetch('http://127.0.0.1:8010/api/paper/positions'),
         fetch('http://127.0.0.1:8010/api/paper/trades'),
         fetch('http://127.0.0.1:8010/api/report/daily'),
@@ -108,6 +110,7 @@ export default function Page() {
         signals: await signalsRes.json(),
         candidates: await candidatesRes.json(),
         portfolioPlan: await portfolioPlanRes.json(),
+        paperSummary: await paperSummaryRes.json(),
         paperPositions: await paperPositionsRes.json(),
         paperTrades: await paperTradesRes.json(),
         report: await reportRes.json(),
@@ -315,6 +318,14 @@ export default function Page() {
           </Card>
 
           <Card title="Paper Portfolio">
+            <Row gutter={16} style={{ marginBottom: 16 }}>
+              <Col span={4}><Statistic title="Open Positions" value={data.paperSummary?.open_positions || 0} /></Col>
+              <Col span={4}><Statistic title="Closed Positions" value={data.paperSummary?.closed_positions || 0} /></Col>
+              <Col span={4}><Statistic title="Open Weight" value={data.paperSummary?.open_weight_pct || 0} suffix="%" /></Col>
+              <Col span={4}><Statistic title="Unrealized" value={data.paperSummary?.unrealized_pnl_pct || 0} suffix="%" /></Col>
+              <Col span={4}><Statistic title="Realized" value={data.paperSummary?.realized_pnl_pct || 0} suffix="%" /></Col>
+              <Col span={4}><Statistic title="Win Rate" value={data.paperSummary?.win_rate_pct || 0} suffix="%" /></Col>
+            </Row>
             <Row gutter={16}>
               <Col span={12}>
                 <Card size="small" title="Open Positions">

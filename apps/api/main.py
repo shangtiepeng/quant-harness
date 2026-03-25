@@ -13,7 +13,7 @@ if str(ROOT) not in sys.path:
 from packages.python.analytics import strategy_performance_summary
 from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
-from packages.python.paper_execution import list_paper_positions, list_paper_trades
+from packages.python.paper_execution import list_paper_positions, list_paper_trades, paper_portfolio_summary
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.resonance_analytics import resonance_validation_summary
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
@@ -177,3 +177,9 @@ def paper_positions():
 @app.get("/api/paper/trades")
 def paper_trades(limit: int = 100):
     return list_paper_trades(limit=limit)
+
+
+@app.get("/api/paper/summary")
+def paper_summary():
+    stocks, _meta = load_market_data(limit=50)
+    return paper_portfolio_summary([s.model_dump() for s in stocks])
