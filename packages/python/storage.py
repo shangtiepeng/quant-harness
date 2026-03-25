@@ -65,6 +65,41 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS paper_positions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                name TEXT NOT NULL,
+                opened_trade_date TEXT NOT NULL,
+                entry_price REAL NOT NULL,
+                target_weight_pct REAL NOT NULL,
+                status TEXT NOT NULL DEFAULT 'open',
+                theme TEXT,
+                strategy_json TEXT NOT NULL,
+                plan_json TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                closed_trade_date TEXT,
+                exit_price REAL,
+                realized_return_pct REAL
+            )
+            """
+        )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS paper_trades (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trade_date TEXT NOT NULL,
+                symbol TEXT NOT NULL,
+                name TEXT NOT NULL,
+                side TEXT NOT NULL,
+                price REAL NOT NULL,
+                weight_pct REAL NOT NULL,
+                note TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
 
 
 def save_pipeline_run(payload: dict[str, Any]) -> int:

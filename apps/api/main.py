@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
 from packages.python.analytics import strategy_performance_summary
 from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
+from packages.python.paper_execution import list_paper_positions, list_paper_trades
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.resonance_analytics import resonance_validation_summary
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
@@ -166,3 +167,13 @@ def analytics_strategy_performance(limit: int = 500):
 @app.get("/api/analytics/resonance-validation")
 def analytics_resonance_validation(limit: int = 500):
     return resonance_validation_summary(limit=limit)
+
+
+@app.get("/api/paper/positions")
+def paper_positions():
+    return list_paper_positions()
+
+
+@app.get("/api/paper/trades")
+def paper_trades(limit: int = 100):
+    return list_paper_trades(limit=limit)

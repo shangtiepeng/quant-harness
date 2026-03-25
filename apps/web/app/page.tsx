@@ -75,6 +75,8 @@ export default function Page() {
     signals: [],
     candidates: [],
     portfolioPlan: null,
+    paperPositions: [],
+    paperTrades: [],
     report: null,
     runs: [],
     validations: [],
@@ -85,12 +87,14 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
+      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, paperPositionsRes, paperTradesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
         fetch('http://127.0.0.1:8010/api/meta'),
         fetch('http://127.0.0.1:8010/api/market/overview'),
         fetch('http://127.0.0.1:8010/api/signals'),
         fetch('http://127.0.0.1:8010/api/candidates'),
         fetch('http://127.0.0.1:8010/api/portfolio-plan'),
+        fetch('http://127.0.0.1:8010/api/paper/positions'),
+        fetch('http://127.0.0.1:8010/api/paper/trades'),
         fetch('http://127.0.0.1:8010/api/report/daily'),
         fetch('http://127.0.0.1:8010/api/history/runs'),
         fetch('http://127.0.0.1:8010/api/history/validations'),
@@ -104,6 +108,8 @@ export default function Page() {
         signals: await signalsRes.json(),
         candidates: await candidatesRes.json(),
         portfolioPlan: await portfolioPlanRes.json(),
+        paperPositions: await paperPositionsRes.json(),
+        paperTrades: await paperTradesRes.json(),
         report: await reportRes.json(),
         runs: await runsRes.json(),
         validations: await validationsRes.json(),
@@ -306,6 +312,40 @@ export default function Page() {
                 { title: '策略共识', dataIndex: 'strategies', key: 'strategies', render: (values: string[]) => (values || []).map((v) => strategyLabelMap[v] || v).join(' / ') },
               ]}
             />
+          </Card>
+
+          <Card title="Paper Portfolio">
+            <Row gutter={16}>
+              <Col span={12}>
+                <Card size="small" title="Open Positions">
+                  <Table
+                    pagination={false}
+                    dataSource={(data.paperPositions || []).filter((item: any) => item.status === 'open').map((item: any) => ({ ...item, key: `pos-${item.id}` }))}
+                    columns={[
+                      { title: '标的', dataIndex: 'name', key: 'name' },
+                      { title: '仓位', dataIndex: 'target_weight_pct', key: 'target_weight_pct', render: (v: number) => `${v}%` },
+                      { title: '开仓日', dataIndex: 'opened_trade_date', key: 'opened_trade_date' },
+                      { title: '入场价', dataIndex: 'entry_price', key: 'entry_price' },
+                    ]}
+                  />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small" title="Recent Paper Trades">
+                  <Table
+                    pagination={false}
+                    dataSource={(data.paperTrades || []).slice(0, 8).map((item: any) => ({ ...item, key: `trade-${item.id}` }))}
+                    columns={[
+                      { title: '日期', dataIndex: 'trade_date', key: 'trade_date' },
+                      { title: '标的', dataIndex: 'name', key: 'name' },
+                      { title: '方向', dataIndex: 'side', key: 'side' },
+                      { title: '价格', dataIndex: 'price', key: 'price' },
+                      { title: '仓位', dataIndex: 'weight_pct', key: 'weight_pct', render: (v: number) => `${v}%` },
+                    ]}
+                  />
+                </Card>
+              </Col>
+            </Row>
           </Card>
 
           <Card title="Daily Report">
