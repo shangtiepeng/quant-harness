@@ -46,7 +46,7 @@ export default function RunJobPage() {
             <Button type="primary" onClick={runJob} loading={loading}>Run Daily Job</Button>
           </Card>
 
-          {error ? <Alert type="error" message={error} /> : null}
+          {error ? <Alert type="error" title={error} /> : null}
 
           {result ? (
             <Card title="Execution Result">
@@ -64,7 +64,7 @@ export default function RunJobPage() {
                 <Descriptions.Item label="JSON Archive">{result.archive?.json_path}</Descriptions.Item>
                 <Descriptions.Item label="Markdown Archive">{result.archive?.md_path}</Descriptions.Item>
               </Descriptions>
-              <Alert style={{ marginTop: 16 }} type="info" message={result.report?.summary_cn} />
+              <Alert style={{ marginTop: 16 }} type="info" title={result.report?.summary_cn} />
             </Card>
           ) : null}
         </Space>

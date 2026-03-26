@@ -88,45 +88,51 @@ export default function Page() {
 
   useEffect(() => {
     async function load() {
-      const [metaRes, marketRes, signalsRes, candidatesRes, portfolioPlanRes, paperSummaryRes, paperPositionsRes, paperTradesRes, reportRes, runsRes, validationsRes, perfRes, themeHeatRes] = await Promise.all([
-        fetch('http://127.0.0.1:8010/api/meta'),
-        fetch('http://127.0.0.1:8010/api/market/overview'),
-        fetch('http://127.0.0.1:8010/api/signals'),
-        fetch('http://127.0.0.1:8010/api/candidates'),
-        fetch('http://127.0.0.1:8010/api/portfolio-plan'),
-        fetch('http://127.0.0.1:8010/api/paper/summary'),
-        fetch('http://127.0.0.1:8010/api/paper/positions'),
-        fetch('http://127.0.0.1:8010/api/paper/trades'),
-        fetch('http://127.0.0.1:8010/api/report/daily'),
-        fetch('http://127.0.0.1:8010/api/history/runs'),
-        fetch('http://127.0.0.1:8010/api/history/validations'),
-        fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
-        fetch('http://127.0.0.1:8010/api/themes/heat'),
-      ])
+      const apiBase = 'http://127.0.0.1:8010'
 
-      const parseJsonOrFallback = async (res: Response, fallback: any) => {
-        if (!res.ok) return fallback
+      const fetchJson = async (path: string, fallback: any) => {
         try {
+          const res = await fetch(`${apiBase}${path}`)
+          if (!res.ok) return fallback
           return await res.json()
         } catch {
           return fallback
         }
       }
 
-      const themeHeatPayload = await parseJsonOrFallback(themeHeatRes, { items: [] })
+      const openApi = await fetchJson('/openapi.json', { paths: {} })
+      const paths = openApi?.paths || {}
+      const hasPath = (path: string) => Boolean(paths[path])
+
+      const [meta, market, signals, candidates, portfolioPlan, paperSummary, paperPositions, paperTrades, report, runs, validations, performance, themeHeatPayload] = await Promise.all([
+        fetchJson('/api/meta', null),
+        fetchJson('/api/market/overview', null),
+        fetchJson('/api/signals', []),
+        hasPath('/api/candidates') ? fetchJson('/api/candidates', []) : Promise.resolve([]),
+        hasPath('/api/portfolio-plan') ? fetchJson('/api/portfolio-plan', null) : Promise.resolve(null),
+        hasPath('/api/paper/summary') ? fetchJson('/api/paper/summary', null) : Promise.resolve(null),
+        hasPath('/api/paper/positions') ? fetchJson('/api/paper/positions', []) : Promise.resolve([]),
+        hasPath('/api/paper/trades') ? fetchJson('/api/paper/trades', []) : Promise.resolve([]),
+        fetchJson('/api/report/daily', null),
+        fetchJson('/api/history/runs', []),
+        fetchJson('/api/history/validations', []),
+        fetchJson('/api/analytics/strategy-performance', []),
+        fetchJson('/api/themes/heat', { items: [] }),
+      ])
+
       const nextData = {
-        meta: await parseJsonOrFallback(metaRes, null),
-        market: await parseJsonOrFallback(marketRes, null),
-        signals: await parseJsonOrFallback(signalsRes, []),
-        candidates: await parseJsonOrFallback(candidatesRes, []),
-        portfolioPlan: await parseJsonOrFallback(portfolioPlanRes, null),
-        paperSummary: await parseJsonOrFallback(paperSummaryRes, null),
-        paperPositions: await parseJsonOrFallback(paperPositionsRes, []),
-        paperTrades: await parseJsonOrFallback(paperTradesRes, []),
-        report: await parseJsonOrFallback(reportRes, null),
-        runs: await parseJsonOrFallback(runsRes, []),
-        validations: await parseJsonOrFallback(validationsRes, []),
-        performance: await parseJsonOrFallback(perfRes, []),
+        meta,
+        market,
+        signals,
+        candidates,
+        portfolioPlan,
+        paperSummary,
+        paperPositions,
+        paperTrades,
+        report,
+        runs,
+        validations,
+        performance,
         themeHeat: themeHeatPayload.items || [],
       }
       setData(nextData)
