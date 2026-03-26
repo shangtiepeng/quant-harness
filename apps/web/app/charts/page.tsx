@@ -14,12 +14,22 @@ export default function ChartsPage() {
 
   useEffect(() => {
     async function load() {
-      const [perfRes, resonanceRes] = await Promise.all([
-        fetch('http://127.0.0.1:8010/api/analytics/strategy-performance'),
-        fetch('http://127.0.0.1:8010/api/analytics/resonance-validation'),
+      const fetchJson = async (url: string, fallback: any) => {
+        try {
+          const res = await fetch(url)
+          if (!res.ok) return fallback
+          return await res.json()
+        } catch {
+          return fallback
+        }
+      }
+
+      const [perfData, resonanceData] = await Promise.all([
+        fetchJson('http://127.0.0.1:8010/api/analytics/strategy-performance', []),
+        fetchJson('http://127.0.0.1:8010/api/analytics/resonance-validation', null),
       ])
-      setItems(await perfRes.json())
-      setResonance(await resonanceRes.json())
+      setItems(perfData)
+      setResonance(resonanceData)
     }
     load()
   }, [])

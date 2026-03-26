@@ -14,14 +14,23 @@ export default function ReportsPage() {
 
   useEffect(() => {
     async function load() {
-      const res = await fetch('http://127.0.0.1:8010/api/history/reports')
-      const data = await res.json()
+      const fetchJson = async (url: string, fallback: any) => {
+        try {
+          const res = await fetch(url)
+          if (!res.ok) return fallback
+          return await res.json()
+        } catch {
+          return fallback
+        }
+      }
+
+      const data = await fetchJson('http://127.0.0.1:8010/api/history/reports', [])
       setReports(data)
       const first = data[0]?.trade_date || ''
       setSelectedDate(first)
       if (first) {
-        const detailRes = await fetch(`http://127.0.0.1:8010/api/history/reports/${first}`)
-        setDetail(await detailRes.json())
+        const detailData = await fetchJson(`http://127.0.0.1:8010/api/history/reports/${first}`, null)
+        setDetail(detailData)
       }
     }
     load()
@@ -29,8 +38,16 @@ export default function ReportsPage() {
 
   async function selectReport(date: string) {
     setSelectedDate(date)
-    const res = await fetch(`http://127.0.0.1:8010/api/history/reports/${date}`)
-    setDetail(await res.json())
+    try {
+      const res = await fetch(`http://127.0.0.1:8010/api/history/reports/${date}`)
+      if (!res.ok) {
+        setDetail(null)
+        return
+      }
+      setDetail(await res.json())
+    } catch {
+      setDetail(null)
+    }
   }
 
   return (
