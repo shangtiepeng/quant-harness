@@ -78,6 +78,27 @@ def portfolio_plan():
     return payload["portfolio_plan"]
 
 
+@app.get("/api/paper/positions")
+def paper_positions():
+    return list_paper_positions()
+
+
+@app.get("/api/paper/trades")
+def paper_trades(limit: int = 100):
+    return list_paper_trades(limit=limit)
+
+
+@app.get("/api/paper/summary")
+def paper_summary():
+    payload = run_pipeline()
+    market_stocks, _meta = load_market_data(limit=50)
+    return {
+        "portfolio": paper_portfolio_summary([s.model_dump() for s in market_stocks]),
+        "plan": payload["portfolio_plan"],
+        "candidate_count": len(payload.get("candidates") or []),
+    }
+
+
 @app.get("/api/themes/heat")
 def themes_heat(limit: int = 10):
     stocks, meta = load_market_data(limit=50)
