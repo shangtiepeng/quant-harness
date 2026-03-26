@@ -39,7 +39,7 @@ export default function RunJobPage() {
         </Space>
       </Header>
       <Content style={{ padding: 24 }}>
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
           <Card>
             <Title level={2}>Run Daily Job</Title>
             <Paragraph>点击按钮执行一次完整盘后任务：采集、归档、验证、生成日报。</Paragraph>

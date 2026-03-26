@@ -286,7 +286,7 @@ export default function Page() {
         </Space>
       </Header>
       <Content style={{ padding: 24 }}>
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
           <Card>
             <Title level={2} style={{ marginBottom: 8 }}>Quant Harness Dashboard</Title>
             <Paragraph style={{ marginBottom: 0 }}>研究优先的 A 股战法系统 MVP</Paragraph>
@@ -383,7 +383,7 @@ export default function Page() {
           <Card title="Daily Report">
             <Paragraph>{data.report?.summary_cn || '暂无摘要'}</Paragraph>
             <Paragraph type="secondary">{data.report?.summary_en || ''}</Paragraph>
-            <Space direction="vertical" size={8} style={{ width: '100%', marginTop: 12 }}>
+            <Space orientation="vertical" size={8} style={{ width: '100%', marginTop: 12 }}>
               <Text strong>主线题材</Text>
               <Space wrap>
                 {(data.report?.mainline_themes || []).map((item: string) => (
@@ -441,7 +441,7 @@ export default function Page() {
             <Col span={10}>
               <Card title="选中核心说明" style={{ height: '100%' }}>
                 {selectedSignal ? (
-                  <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                  <Space orientation="vertical" size={12} style={{ width: '100%' }}>
                     <div>
                       <Title level={4} style={{ marginBottom: 4 }}>{selectedSignal.name}</Title>
                       <Text type="secondary">{selectedSignal.symbol}</Text>

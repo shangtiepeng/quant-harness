@@ -57,7 +57,7 @@ export default function ChartsPage() {
         </Space>
       </Header>
       <Content style={{ padding: 24 }}>
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
           <Card>
             <Title level={2}>Strategy & Resonance Analytics</Title>
             <Paragraph>不仅看策略表现，也看共振等级、主线归属和市场阶段下的验证差异。</Paragraph>
