@@ -10,15 +10,17 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
+from collections import Counter
+
 from packages.python.analytics import strategy_performance_summary
+from packages.python.auto_trading import auto_trade_snapshot, execution_control_matrix, run_auto_trading
 from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
 from packages.python.paper_execution import list_paper_positions, list_paper_trades, paper_portfolio_summary
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.resonance_analytics import resonance_validation_summary
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
-from collections import Counter
-
+from packages.python.strategy_portfolios import strategy_portfolio_summary
 from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
@@ -97,6 +99,26 @@ def paper_summary():
         "plan": payload["portfolio_plan"],
         "candidate_count": len(payload.get("candidates") or []),
     }
+
+
+@app.get("/api/auto-trading/meta")
+def auto_trading_meta():
+    return execution_control_matrix()
+
+
+@app.get("/api/auto-trading/snapshot")
+def auto_trading_snapshot(mode: str = "hybrid", limit: int = 50):
+    return auto_trade_snapshot(mode=mode, limit=limit)
+
+
+@app.post("/api/auto-trading/run")
+def auto_trading_run(mode: str = "hybrid", limit: int = 50):
+    return run_auto_trading(mode=mode, limit=limit)
+
+
+@app.get("/api/strategy-portfolios/summary")
+def strategy_portfolios_summary(limit: int = 20):
+    return strategy_portfolio_summary(limit=limit)
 
 
 @app.get("/api/themes/heat")
@@ -190,17 +212,3 @@ def analytics_resonance_validation(limit: int = 500):
     return resonance_validation_summary(limit=limit)
 
 
-@app.get("/api/paper/positions")
-def paper_positions():
-    return list_paper_positions()
-
-
-@app.get("/api/paper/trades")
-def paper_trades(limit: int = 100):
-    return list_paper_trades(limit=limit)
-
-
-@app.get("/api/paper/summary")
-def paper_summary():
-    stocks, _meta = load_market_data(limit=50)
-    return paper_portfolio_summary([s.model_dump() for s in stocks])
