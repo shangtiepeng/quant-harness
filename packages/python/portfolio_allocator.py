@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from packages.python.adaptive_params import get_adaptive_parameter_profile
 from packages.python.position_sizing import apply_position_sizing
 from packages.python.risk_engine import build_risk_profile
 from packages.python.strategy_governor import build_strategy_governor
@@ -68,6 +69,8 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         ]
 
     strategy_governor = build_strategy_governor(history_limit=200)
+    adaptive_profile = get_adaptive_parameter_profile(limit=160)
+    adaptive_params = adaptive_profile.get('params') or {}
     enabled_by_governor = set(strategy_governor.get('enabled_strategies') or enabled_strategies)
 
     ranked = []
@@ -102,12 +105,18 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
             continue
 
         suggested = per_position_cap
+        leader_weight = float(adaptive_params.get('signal_weight_leader') or 1.0)
+        hotmoney_weight = float(adaptive_params.get('signal_weight_hotmoney') or 1.0)
         if level == 'B':
             suggested = min(suggested, 12 if risk_budget <= 45 else 16)
         elif level == 'C':
             suggested = min(suggested, 8)
         if len(strategies) >= 2:
             suggested += 2
+        if 'leader' in strategies:
+            suggested *= leader_weight
+        if 'hotmoney' in strategies:
+            suggested *= hotmoney_weight
 
         allowed_by_strategy = min(max_strategy_exposure_pct - strategy_exposure.get(s, 0.0) for s in strategies)
         allowed_by_theme = max_theme_exposure_pct - theme_exposure.get(theme, 0.0)
@@ -155,6 +164,8 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
 
     if strategy_governor.get('notes'):
         notes.extend(strategy_governor['notes'])
+    if adaptive_profile.get('notes'):
+        notes.extend(adaptive_profile['notes'])
 
     base_plan = {
         'market_stage': stage,
@@ -166,6 +177,7 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         'max_theme_exposure_pct': max_theme_exposure_pct,
         'enabled_strategies': sorted(enabled_by_governor),
         'strategy_governor': strategy_governor,
+        'adaptive_profile': adaptive_profile,
         'strategy_weights': strategy_weights,
         'strategy_exposure': strategy_exposure,
         'theme_exposure': theme_exposure,

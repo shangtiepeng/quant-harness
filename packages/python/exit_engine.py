@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from packages.python.adaptive_params import get_adaptive_parameter_profile
+
 
 DEFAULT_STOP_LOSS_PCT = -5.0
 DEFAULT_TAKE_PROFIT_PCT = 12.0
@@ -53,11 +55,14 @@ def evaluate_exit_decision(
             'thresholds': {},
         }
 
+    adaptive_profile = get_adaptive_parameter_profile(limit=160)
+    adaptive_params = adaptive_profile.get('params') or {}
+
     ret_pct = round((current_price / entry_price - 1) * 100, 2)
     hold_days = _rough_hold_days(str(position.get('opened_trade_date') or trade_date), trade_date)
     hold_limit = int(RISK_MODE_HOLD_LIMIT.get(risk_mode, 5))
-    stop_loss_pct = float(RISK_MODE_STOP.get(risk_mode, DEFAULT_STOP_LOSS_PCT))
-    take_profit_pct = float(RISK_MODE_TP.get(risk_mode, DEFAULT_TAKE_PROFIT_PCT))
+    stop_loss_pct = float(adaptive_params.get('stop_loss_pct') or RISK_MODE_STOP.get(risk_mode, DEFAULT_STOP_LOSS_PCT))
+    take_profit_pct = float(adaptive_params.get('take_profit_pct') or RISK_MODE_TP.get(risk_mode, DEFAULT_TAKE_PROFIT_PCT))
 
     target_weight = float(position.get('target_weight_pct') or 0)
     planned_weight = float((planned or {}).get('target_weight_pct') or 0)
@@ -74,9 +79,11 @@ def evaluate_exit_decision(
     stop_loss = ret_pct <= stop_loss_pct
     take_profit = ret_pct >= take_profit_pct
     rebalance_down = planned is not None and planned_weight > 0 and planned_weight < target_weight - 3.5
-    partial_take_profit = (not partial_exit_taken) and ret_pct >= DEFAULT_PARTIAL_TAKE_PROFIT_PCT
+    partial_take_profit_pct = float(adaptive_params.get('partial_take_profit_pct') or DEFAULT_PARTIAL_TAKE_PROFIT_PCT)
+    trail_protect_pct = float(adaptive_params.get('trail_protect_pct') or DEFAULT_TRAIL_PROTECT_PCT)
+    partial_take_profit = (not partial_exit_taken) and ret_pct >= partial_take_profit_pct
     break_even_exit = partial_exit_taken and ret_pct <= 0 and peak_return_pct >= DEFAULT_BREAK_EVEN_TRIGGER_PCT
-    trailing_stop = peak_return_pct >= DEFAULT_PARTIAL_TAKE_PROFIT_PCT and (peak_return_pct - ret_pct) >= DEFAULT_TRAIL_PROTECT_PCT
+    trailing_stop = peak_return_pct >= partial_take_profit_pct and (peak_return_pct - ret_pct) >= trail_protect_pct
 
     should_close = any([
         removed_from_plan,
@@ -137,8 +144,9 @@ def evaluate_exit_decision(
             'hold_limit': hold_limit,
             'stop_loss_pct': stop_loss_pct,
             'take_profit_pct': take_profit_pct,
-            'partial_take_profit_pct': DEFAULT_PARTIAL_TAKE_PROFIT_PCT,
+            'partial_take_profit_pct': partial_take_profit_pct,
             'break_even_trigger_pct': DEFAULT_BREAK_EVEN_TRIGGER_PCT,
-            'trail_protect_pct': DEFAULT_TRAIL_PROTECT_PCT,
+            'trail_protect_pct': trail_protect_pct,
+            'adaptive_profile': adaptive_profile.get('active_profile'),
         },
     }
