@@ -14,6 +14,7 @@ from collections import Counter
 
 from packages.python.analytics import strategy_performance_summary
 from packages.python.auto_trading import auto_trade_snapshot, execution_control_matrix, run_auto_trading
+from packages.python.backtest import backtest_signals
 from packages.python.daily_jobs import run_daily_job
 from packages.python.execution.pipeline import run_pipeline
 from packages.python.paper_execution import list_paper_positions, list_paper_trades, paper_portfolio_summary
@@ -205,6 +206,11 @@ def history_report_detail(trade_date: str):
 @app.get("/api/analytics/strategy-performance")
 def analytics_strategy_performance(limit: int = 500):
     return strategy_performance_summary(limit=limit)
+
+
+@app.get("/api/analytics/backtest")
+def analytics_backtest(limit: int = 50, kline_days: int = 30):
+    return backtest_signals(limit=limit, kline_days=kline_days)
 
 
 @app.get("/api/analytics/resonance-validation")
