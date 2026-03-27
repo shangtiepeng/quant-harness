@@ -81,10 +81,20 @@ def init_db() -> None:
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 closed_trade_date TEXT,
                 exit_price REAL,
-                realized_return_pct REAL
+                realized_return_pct REAL,
+                peak_return_pct REAL DEFAULT 0,
+                partial_exit_taken INTEGER DEFAULT 0,
+                lifecycle_state TEXT DEFAULT 'open'
             )
             """
         )
+        existing_columns = {row['name'] for row in conn.execute("PRAGMA table_info(paper_positions)").fetchall()}
+        if 'peak_return_pct' not in existing_columns:
+            conn.execute("ALTER TABLE paper_positions ADD COLUMN peak_return_pct REAL DEFAULT 0")
+        if 'partial_exit_taken' not in existing_columns:
+            conn.execute("ALTER TABLE paper_positions ADD COLUMN partial_exit_taken INTEGER DEFAULT 0")
+        if 'lifecycle_state' not in existing_columns:
+            conn.execute("ALTER TABLE paper_positions ADD COLUMN lifecycle_state TEXT DEFAULT 'open'")
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS paper_trades (

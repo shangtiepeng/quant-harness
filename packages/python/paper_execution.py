@@ -57,6 +57,30 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                 planned=planned,
             )
             ret_pct = float(decision['return_pct'])
+            peak_return_pct = float(decision.get('peak_return_pct') or ret_pct)
+            conn.execute(
+                "UPDATE paper_positions SET peak_return_pct = ?, lifecycle_state = ? WHERE id = ?",
+                (peak_return_pct, decision.get('next_state', 'open') if decision.get('action') == 'partial_take_profit' else position.get('lifecycle_state', 'open'), position['id']),
+            )
+            if decision.get('action') == 'partial_take_profit':
+                current_weight = float(position['target_weight_pct'])
+                reduced_weight = round(max(3.0, current_weight * 0.5), 1)
+                conn.execute(
+                    "UPDATE paper_positions SET target_weight_pct = ?, partial_exit_taken = 1, lifecycle_state = 'scaled_out', plan_json = ? WHERE id = ?",
+                    (reduced_weight, json.dumps(planned or {}, ensure_ascii=False), position['id']),
+                )
+                conn.execute(
+                    "INSERT INTO paper_trades (trade_date, symbol, name, side, price, weight_pct, note) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    (trade_date, position['symbol'], position['name'], 'sell', current_price, round(current_weight - reduced_weight, 1), 'paper_partial_take_profit'),
+                )
+                rebalanced.append({
+                    'symbol': position['symbol'],
+                    'name': position['name'],
+                    'from_weight_pct': current_weight,
+                    'to_weight_pct': reduced_weight,
+                    'reason': 'partial_take_profit',
+                })
+                continue
             if decision['should_close']:
                 reason = str(decision['reason'])
                 if reason == 'plan_removed':
@@ -71,6 +95,10 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                     exit_note = 'paper_stop_loss'
                 elif reason == 'take_profit':
                     exit_note = 'paper_take_profit'
+                elif reason == 'trailing_stop':
+                    exit_note = 'paper_trailing_stop_exit'
+                elif reason == 'break_even_exit':
+                    exit_note = 'paper_break_even_exit'
                 elif reason == 'rebalance_down':
                     exit_note = 'paper_rebalance_down_exit'
                 else:

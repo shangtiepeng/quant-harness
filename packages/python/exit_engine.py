@@ -5,6 +5,8 @@ from typing import Any
 
 DEFAULT_STOP_LOSS_PCT = -5.0
 DEFAULT_TAKE_PROFIT_PCT = 12.0
+DEFAULT_PARTIAL_TAKE_PROFIT_PCT = 6.0
+DEFAULT_BREAK_EVEN_TRIGGER_PCT = 3.0
 DEFAULT_TRAIL_PROTECT_PCT = 4.0
 RISK_MODE_HOLD_LIMIT = {
     'defensive_probe': 3,
@@ -62,21 +64,30 @@ def evaluate_exit_decision(
     removed_from_plan = planned is None
     resonance_level = str((planned or {}).get('resonance_level') or '')
     role = str((planned or {}).get('role') or (planned or {}).get('resonance_role') or '')
+    partial_exit_taken = bool(int(position.get('partial_exit_taken') or 0))
+    peak_return_pct = max(float(position.get('peak_return_pct') or 0), ret_pct)
+    lifecycle_state = str(position.get('lifecycle_state') or 'open')
+
     resonance_drop = resonance_level in {'C', 'D'}
     role_break = role in {'noise', 'follower'} and risk_mode in {'defensive_probe', 'risk_control'}
     time_exit = hold_days >= hold_limit
     stop_loss = ret_pct <= stop_loss_pct
     take_profit = ret_pct >= take_profit_pct
     rebalance_down = planned is not None and planned_weight > 0 and planned_weight < target_weight - 3.5
+    partial_take_profit = (not partial_exit_taken) and ret_pct >= DEFAULT_PARTIAL_TAKE_PROFIT_PCT
+    break_even_exit = partial_exit_taken and ret_pct <= 0 and peak_return_pct >= DEFAULT_BREAK_EVEN_TRIGGER_PCT
+    trailing_stop = peak_return_pct >= DEFAULT_PARTIAL_TAKE_PROFIT_PCT and (peak_return_pct - ret_pct) >= DEFAULT_TRAIL_PROTECT_PCT
 
     should_close = any([
         removed_from_plan,
         resonance_drop,
         role_break,
-        time_exit,
+        time_exit and not partial_take_profit,
         stop_loss,
         take_profit,
         rebalance_down,
+        break_even_exit,
+        trailing_stop,
     ])
 
     if removed_from_plan:
@@ -89,6 +100,10 @@ def evaluate_exit_decision(
         reason = 'stop_loss'
     elif take_profit:
         reason = 'take_profit'
+    elif trailing_stop:
+        reason = 'trailing_stop'
+    elif break_even_exit:
+        reason = 'break_even_exit'
     elif time_exit:
         reason = 'time_exit'
     elif rebalance_down:
@@ -96,15 +111,34 @@ def evaluate_exit_decision(
     else:
         reason = 'hold'
 
+    action = 'hold'
+    if partial_take_profit and not should_close:
+        action = 'partial_take_profit'
+    elif should_close:
+        action = 'full_exit'
+
+    next_state = lifecycle_state
+    if action == 'partial_take_profit':
+        next_state = 'scaled_out'
+    elif should_close:
+        next_state = 'closed'
+
     return {
         'should_close': should_close,
         'reason': reason,
+        'action': action,
         'hold_days': hold_days,
         'return_pct': ret_pct,
+        'peak_return_pct': peak_return_pct,
+        'partial_take_profit': partial_take_profit,
+        'partial_exit_taken': partial_exit_taken,
+        'next_state': next_state,
         'thresholds': {
             'hold_limit': hold_limit,
             'stop_loss_pct': stop_loss_pct,
             'take_profit_pct': take_profit_pct,
+            'partial_take_profit_pct': DEFAULT_PARTIAL_TAKE_PROFIT_PCT,
+            'break_even_trigger_pct': DEFAULT_BREAK_EVEN_TRIGGER_PCT,
             'trail_protect_pct': DEFAULT_TRAIL_PROTECT_PCT,
         },
     }
