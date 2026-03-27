@@ -91,6 +91,9 @@ def run_auto_trading(mode: str | None = None, limit: int = 50) -> dict[str, Any]
         'risk_mode': payload['portfolio_plan'].get('risk_mode'),
         'execution_policy': payload['portfolio_plan'].get('execution_policy'),
         'no_trade': payload['portfolio_plan'].get('no_trade'),
+        'risk_budget_pct': payload['portfolio_plan'].get('risk_budget_pct'),
+        'remaining_risk_budget_pct': payload['portfolio_plan'].get('remaining_risk_budget_pct'),
+        'risk_profile': payload['portfolio_plan'].get('risk_profile') or {},
         'notes': payload['portfolio_plan'].get('notes') or [],
     }
 

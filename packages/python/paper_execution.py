@@ -135,6 +135,8 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
         for item in plan.get('candidate_plan') or []:
             if item['symbol'] in existing_open:
                 continue
+            if float(item.get('target_weight_pct') or 0) < 3:
+                continue
             entry_price = _find_candidate_price(item['symbol'], stocks)
             if entry_price <= 0:
                 continue

@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from packages.python.position_sizing import apply_position_sizing
+from packages.python.risk_engine import build_risk_profile
+
 
 STRATEGY_LABELS = {
     'leader': '龙头策略',
@@ -146,7 +149,7 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         for item in strategy_weights:
             item['weight_pct'] = round(item['weight_pct'] / total * 100, 1)
 
-    return {
+    base_plan = {
         'market_stage': stage,
         'risk_mode': risk_mode,
         'execution_policy': execution_policy,
@@ -162,3 +165,7 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         'no_trade': no_trade,
         'notes': notes,
     }
+    risk_profile = build_risk_profile(base_plan, plan_items)
+    sized_plan = apply_position_sizing(base_plan, risk_profile)
+    sized_plan['risk_profile'] = risk_profile
+    return sized_plan

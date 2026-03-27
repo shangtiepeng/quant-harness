@@ -5,7 +5,6 @@ from statistics import mean
 from typing import Any
 
 from packages.python.data.history_collectors import fetch_eastmoney_kline
-from packages.python.execution.pipeline import run_pipeline
 from packages.python.storage import list_all_signal_details
 
 
@@ -47,7 +46,6 @@ def _max_drawdown_pct(entry_price: float, rows: list[dict[str, Any]], bars: int 
 
 
 def backtest_signals(limit: int = 200, kline_days: int = 30) -> dict[str, Any]:
-    payload = run_pipeline(limit=50)
     signal_rows = list_all_signal_details(limit=limit)
 
     trades: list[dict[str, Any]] = []
@@ -94,9 +92,12 @@ def backtest_signals(limit: int = 200, kline_days: int = 30) -> dict[str, Any]:
             errors.append({'symbol': symbol, 'trade_date': trade_date, 'error': str(exc)})
 
     scoreboard = build_backtest_scoreboard(trades)
+    available_dates = sorted({str(row.get('trade_date') or '') for row in signal_rows if row.get('trade_date')})
     return {
-        'trade_date': payload['trade_date'],
-        'meta': payload.get('meta') or {},
+        'date_range': {
+            'start': available_dates[0] if available_dates else None,
+            'end': available_dates[-1] if available_dates else None,
+        },
         'history_signal_count': len(signal_rows),
         'trade_count': len(trades),
         'skipped_count': len(skipped),
