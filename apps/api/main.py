@@ -25,6 +25,7 @@ from packages.python.resonance_analytics import resonance_validation_summary
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.strategy_portfolios import strategy_portfolio_summary
 from packages.python.portfolio_evaluator import evaluate_strategy_portfolios
+from packages.python.experiment_lab import run_experiment_lab
 from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
@@ -234,5 +235,10 @@ def analytics_trade_lifecycle(limit: int = 200):
 @app.get("/api/analytics/strategy-governor")
 def analytics_strategy_governor(limit: int = 200):
     return build_strategy_governor(history_limit=limit)
+
+
+@app.get("/api/analytics/experiment-lab")
+def analytics_experiment_lab(limit: int = 160):
+    return run_experiment_lab(limit=limit)
 
 
