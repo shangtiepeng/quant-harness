@@ -4,6 +4,7 @@ from typing import Any
 
 from packages.python.position_sizing import apply_position_sizing
 from packages.python.risk_engine import build_risk_profile
+from packages.python.strategy_governor import build_strategy_governor
 
 
 STRATEGY_LABELS = {
@@ -66,6 +67,9 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
             '回避纯跟风和低共振标的。',
         ]
 
+    strategy_governor = build_strategy_governor(history_limit=200)
+    enabled_by_governor = set(strategy_governor.get('enabled_strategies') or enabled_strategies)
+
     ranked = []
     for item in candidates:
         strategies = item.get('strategies') or []
@@ -90,7 +94,7 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         level = item.get('resonance_level', 'D')
         if level == 'D':
             continue
-        strategies = [s for s in (item.get('strategies') or []) if s in enabled_strategies]
+        strategies = [s for s in (item.get('strategies') or []) if s in enabled_strategies and s in enabled_by_governor]
         if not strategies:
             continue
         theme = item.get('theme') or '未分类'
@@ -149,6 +153,9 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         for item in strategy_weights:
             item['weight_pct'] = round(item['weight_pct'] / total * 100, 1)
 
+    if strategy_governor.get('notes'):
+        notes.extend(strategy_governor['notes'])
+
     base_plan = {
         'market_stage': stage,
         'risk_mode': risk_mode,
@@ -157,7 +164,8 @@ def build_portfolio_plan(market: dict[str, Any], candidates: list[dict[str, Any]
         'max_positions': max_positions,
         'per_position_cap_pct': per_position_cap,
         'max_theme_exposure_pct': max_theme_exposure_pct,
-        'enabled_strategies': enabled_strategies,
+        'enabled_strategies': sorted(enabled_by_governor),
+        'strategy_governor': strategy_governor,
         'strategy_weights': strategy_weights,
         'strategy_exposure': strategy_exposure,
         'theme_exposure': theme_exposure,

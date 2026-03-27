@@ -5,6 +5,7 @@ from statistics import mean
 from typing import Any
 
 from packages.python.backtest import backtest_signals
+from packages.python.strategy_governor import build_strategy_governor
 
 
 RISK_MODE_LIMITS: dict[str, dict[str, float]] = {
@@ -57,6 +58,7 @@ def build_risk_profile(market: dict[str, Any], candidate_plan: list[dict[str, An
 
     backtest = backtest_signals(limit=history_limit, kline_days=60)
     historical_trades = backtest.get('trades') or []
+    strategy_governor = build_strategy_governor(history_limit=history_limit)
 
     stage_avg = _bucket_avg_return(historical_trades, 'market_stage', market_stage)
     stage_win_rate = _bucket_win_rate(historical_trades, 'market_stage', market_stage)
@@ -99,10 +101,18 @@ def build_risk_profile(market: dict[str, Any], candidate_plan: list[dict[str, An
         theme_count[theme] += 1
         item_trades = [t for t in historical_trades if t.get('symbol') == symbol and t.get('return_1d') is not None]
         strategy_scores = []
+        governor_map = {entry['strategy']: entry for entry in (strategy_governor.get('items') or [])}
+        frozen_hit = False
+        strategy_weight_multiplier = 1.0
         for strategy in item.get('strategies') or []:
             avg = _bucket_avg_return(historical_trades, 'strategy', strategy)
             if avg is not None:
                 strategy_scores.append(avg)
+            governor_item = governor_map.get(strategy)
+            if governor_item:
+                strategy_weight_multiplier *= float(governor_item.get('weight_multiplier') or 1.0)
+                if governor_item.get('status') == 'frozen':
+                    frozen_hit = True
         avg_strategy_edge = round(mean(strategy_scores), 2) if strategy_scores else None
         symbol_avg_1d = round(mean(float(t['return_1d']) for t in item_trades), 2) if item_trades else None
         symbol_win_rate = round(sum(1 for t in item_trades if float(t['return_1d']) > 0) / len(item_trades) * 100, 2) if item_trades else None
@@ -119,6 +129,9 @@ def build_risk_profile(market: dict[str, Any], candidate_plan: list[dict[str, An
             quality_multiplier += max(-0.12, min(0.2, avg_strategy_edge / 10))
         if symbol_avg_1d is not None:
             quality_multiplier += max(-0.12, min(0.18, symbol_avg_1d / 12))
+        quality_multiplier *= strategy_weight_multiplier
+        if frozen_hit:
+            quality_multiplier = min(quality_multiplier, 0.35)
 
         candidate_diagnostics.append({
             'symbol': symbol,
@@ -126,12 +139,17 @@ def build_risk_profile(market: dict[str, Any], candidate_plan: list[dict[str, An
             'avg_strategy_edge_1d': avg_strategy_edge,
             'symbol_avg_return_1d': symbol_avg_1d,
             'symbol_win_rate_1d_pct': symbol_win_rate,
-            'quality_multiplier': round(max(0.55, min(1.45, quality_multiplier)), 2),
+            'strategy_weight_multiplier': round(strategy_weight_multiplier, 2),
+            'blocked_by_governor': frozen_hit,
+            'quality_multiplier': round(max(0.25, min(1.65, quality_multiplier)), 2),
         })
 
     crowded_themes = [theme for theme, count in theme_count.items() if count >= 2]
     if crowded_themes:
         notes.append(f'候选题材出现拥挤：{", ".join(crowded_themes[:3])}，后续按题材上限裁剪。')
+
+    if strategy_governor.get('notes'):
+        notes.extend(strategy_governor['notes'])
 
     return {
         'risk_mode': risk_mode,
@@ -142,6 +160,7 @@ def build_risk_profile(market: dict[str, Any], candidate_plan: list[dict[str, An
         'recent_negative_streak': recent_negative_streak,
         'historical_stage_avg_return_1d': stage_avg,
         'historical_stage_win_rate_1d_pct': stage_win_rate,
+        'strategy_governor': strategy_governor,
         'candidate_diagnostics': candidate_diagnostics,
         'notes': notes,
     }

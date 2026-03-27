@@ -6,6 +6,7 @@ from typing import Any
 
 from packages.python.storage import list_validations
 from packages.python.lifecycle_analytics import trade_lifecycle_summary
+from packages.python.strategy_governor import build_strategy_governor
 
 
 def strategy_performance_summary(limit: int = 500) -> list[dict[str, Any]]:
