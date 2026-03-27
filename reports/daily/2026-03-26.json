@@ -1,0 +1,346 @@
+{
+  "run_id": 13,
+  "trade_date": "2026-03-26",
+  "source": "eastmoney",
+  "signal_count": 10,
+  "validation_count": 10,
+  "paper_execution": {
+    "opened": [
+      {
+        "symbol": "301587",
+        "name": "中瑞股份",
+        "entry_price": 27.03,
+        "target_weight_pct": 12
+      }
+    ],
+    "closed": [
+      {
+        "symbol": "301587",
+        "name": "中瑞股份",
+        "exit_price": 27.03,
+        "realized_return_pct": 0.0
+      }
+    ],
+    "rebalanced": [],
+    "opened_count": 1,
+    "closed_count": 1,
+    "rebalanced_count": 0,
+    "execution_skipped": false,
+    "execution_policy": "paper_only",
+    "risk_mode": "defensive_probe",
+    "market_stage": "ice"
+  },
+  "report": {
+    "trade_date": "2026-03-26",
+    "market": {
+      "trade_date": "2026-03-26",
+      "market_sentiment_stage": "ice",
+      "limit_up_count": 44,
+      "limit_down_count": 0,
+      "broken_board_rate": 0.0,
+      "highest_board": 0,
+      "notes": [
+        "涨停家数 44 / Limit-up count 44",
+        "跌停家数 0 / Limit-down count 0",
+        "最高连板 0 / Highest board 0",
+        "炸板率 0.0% / Broken-board rate 0.0%"
+      ]
+    },
+    "top_signals": [
+      {
+        "strategy": "leader",
+        "symbol": "603601",
+        "name": "再升科技",
+        "score": 76.5,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 科技"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "科技",
+        "secondary_theme": "",
+        "concepts": [],
+        "resonance_score": 79.1,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 2",
+          "题材热度分 9.2",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "301587",
+        "name": "中瑞股份",
+        "score": 64.7,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 5.22",
+          "叙事强度 0.5",
+          "题材归属 电力设备"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "电力设备",
+        "secondary_theme": "电池",
+        "concepts": [
+          "电力设备",
+          "电池",
+          "锂电池",
+          "电池技术",
+          "消费电子概念",
+          "储能概念",
+          "商业航天",
+          "无线耳机",
+          "新能源车",
+          "一带一路",
+          "特斯拉",
+          "智能穿戴",
+          "锂电池概念",
+          "节能环保"
+        ],
+        "resonance_score": 79.1,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 12.7",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "301587",
+        "name": "中瑞股份",
+        "score": 63.6,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 电力设备"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "电力设备",
+        "secondary_theme": "电池",
+        "concepts": [
+          "电力设备",
+          "电池",
+          "锂电池",
+          "电池技术",
+          "消费电子概念",
+          "储能概念",
+          "商业航天",
+          "无线耳机",
+          "新能源车",
+          "一带一路",
+          "特斯拉",
+          "智能穿戴",
+          "锂电池概念",
+          "节能环保"
+        ],
+        "resonance_score": 79.1,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 12.7",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300501",
+        "name": "海顺新材",
+        "score": 63.2,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 新材料"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "新材料",
+        "secondary_theme": "",
+        "concepts": [],
+        "resonance_score": 70.1,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 7.5",
+          "共振角色 follower"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300501",
+        "name": "海顺新材",
+        "score": 50.9,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 3.84",
+          "叙事强度 0.5",
+          "题材归属 新材料"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "新材料",
+        "secondary_theme": "",
+        "concepts": [],
+        "resonance_score": 70.1,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 7.5",
+          "共振角色 follower"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "301292",
+        "name": "海科新源",
+        "score": 78.8,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 电力设备"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "电力设备",
+        "secondary_theme": "电池",
+        "concepts": [
+          "电力设备",
+          "电池",
+          "电池化学品",
+          "昨日高换手",
+          "专精特新",
+          "QFII重仓",
+          "电池技术",
+          "化妆品概念",
+          "固态电池",
+          "新能源车",
+          "特斯拉",
+          "锂电池概念",
+          "化工原料"
+        ],
+        "resonance_score": 66.7,
+        "resonance_level": "B",
+        "resonance_role": "noise",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 12.7",
+          "共振角色 noise",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "000722",
+        "name": "湖南发展",
+        "score": 59.6,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 4.71",
+          "叙事强度 0.5",
+          "题材归属 题材待补全"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "题材待补全",
+        "secondary_theme": "",
+        "concepts": [],
+        "resonance_score": 43.1,
+        "resonance_level": "D",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 未上榜",
+          "题材热度分 0.0",
+          "共振角色 follower"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "000927",
+        "name": "中国铁物",
+        "score": 68.4,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 5.59",
+          "叙事强度 0.5",
+          "题材归属 题材待补全"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "题材待补全",
+        "secondary_theme": "",
+        "concepts": [],
+        "resonance_score": 40.5,
+        "resonance_level": "D",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 未上榜",
+          "题材热度分 0.0",
+          "共振角色 follower"
+        ]
+      }
+    ],
+    "summary_cn": "2026-03-26 市场处于冰点阶段，涨停 44 家，跌停 0 家，最高连板 0。当前优先关注强共振候选：再升科技(603601)、中瑞股份(301587)、海顺新材(300501)。其中优先看主线题材内的主线龙头/前排核心，弱共振或噪声信号如 湖南发展(000722)、中国铁物(000927) 更适合观察而非追击。整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。",
+    "summary_en": "On 2026-03-26, the market is in ice stage. There are 44 limit-up stocks, 0 limit-down stocks, and the highest board is 0. Priority goes to high-resonance names: 再升科技(603601)、中瑞股份(301587)、海顺新材(300501). Prefer mainline leaders/frontline core setups, while weaker names such as 湖南发展(000722)、中国铁物(000927) are better treated as watch-only. Use this as a research and next-day validation framework, not a fully automated execution trigger.",
+    "mainline_themes": [
+      "科技",
+      "电力设备",
+      "新材料"
+    ],
+    "focus_candidates": [
+      "再升科技(603601)",
+      "中瑞股份(301587)",
+      "海顺新材(300501)"
+    ],
+    "observe_candidates": [],
+    "avoid_candidates": [
+      "湖南发展(000722)",
+      "中国铁物(000927)"
+    ],
+    "tomorrow_plan": [
+      "优先盯住主线题材：科技、电力设备。",
+      "重点跟踪强共振候选的竞价、承接和回封质量：再升科技(603601)、中瑞股份(301587)。",
+      "情绪仍偏冰点，适合轻仓试错，不宜把弱共振信号当成进攻主仓。"
+    ]
+  }
+}

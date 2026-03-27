@@ -1,0 +1,393 @@
+{
+  "run_id": 19,
+  "trade_date": "2026-03-27",
+  "source": "eastmoney",
+  "signal_count": 10,
+  "validation_count": 10,
+  "paper_execution": {
+    "opened": [
+      {
+        "symbol": "300584",
+        "name": "海辰药业",
+        "entry_price": 45.18,
+        "target_weight_pct": 12
+      }
+    ],
+    "closed": [
+      {
+        "symbol": "300584",
+        "name": "海辰药业",
+        "exit_price": 45.18,
+        "realized_return_pct": 0.0
+      }
+    ],
+    "rebalanced": [],
+    "opened_count": 1,
+    "closed_count": 1,
+    "rebalanced_count": 0,
+    "execution_skipped": false,
+    "execution_policy": "paper_only",
+    "risk_mode": "defensive_probe",
+    "market_stage": "ice"
+  },
+  "report": {
+    "trade_date": "2026-03-27",
+    "market": {
+      "trade_date": "2026-03-27",
+      "market_sentiment_stage": "ice",
+      "limit_up_count": 50,
+      "limit_down_count": 0,
+      "broken_board_rate": 0.0,
+      "highest_board": 0,
+      "notes": [
+        "涨停家数 50 / Limit-up count 50",
+        "跌停家数 0 / Limit-down count 0",
+        "最高连板 0 / Highest board 0",
+        "炸板率 0.0% / Broken-board rate 0.0%"
+      ]
+    },
+    "top_signals": [
+      {
+        "strategy": "hotmoney",
+        "symbol": "300584",
+        "name": "海辰药业",
+        "score": 48.3,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 3.58",
+          "叙事强度 0.5",
+          "题材归属 医药"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "医药",
+        "secondary_theme": "化学制剂",
+        "concepts": [
+          "医药",
+          "化学制剂",
+          "昨日高振幅",
+          "电池技术",
+          "病原体防治",
+          "痘病毒防治",
+          "幽门螺杆菌概念",
+          "固态电池"
+        ],
+        "resonance_score": 79.1,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 37.36",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300584",
+        "name": "海辰药业",
+        "score": 44.9,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 医药"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "医药",
+        "secondary_theme": "化学制剂",
+        "concepts": [
+          "医药",
+          "化学制剂",
+          "昨日高振幅",
+          "电池技术",
+          "病原体防治",
+          "痘病毒防治",
+          "幽门螺杆菌概念",
+          "固态电池"
+        ],
+        "resonance_score": 79.1,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 37.36",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300204",
+        "name": "舒泰神",
+        "score": 60.5,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 4.8",
+          "叙事强度 0.5",
+          "题材归属 医药"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "医药",
+        "secondary_theme": "化学制剂",
+        "concepts": [
+          "医药",
+          "化学制剂",
+          "昨日高振幅",
+          "昨日首板",
+          "创新药",
+          "单抗概念"
+        ],
+        "resonance_score": 78.9,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 37.36",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "301201",
+        "name": "诚达药业",
+        "score": 56.9,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 4.44",
+          "叙事强度 0.5",
+          "题材归属 医药"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "医药",
+        "secondary_theme": "医疗服务",
+        "concepts": [
+          "医药",
+          "医疗服务",
+          "医疗研发外包",
+          "专精特新",
+          "CRO"
+        ],
+        "resonance_score": 77.2,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 1",
+          "题材热度分 37.36",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300858",
+        "name": "科拓生物",
+        "score": 61.6,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 4.91",
+          "叙事强度 0.5",
+          "题材归属 基础化工"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "基础化工",
+        "secondary_theme": "化学制品",
+        "concepts": [
+          "基础化工",
+          "化学制品",
+          "食品及饲料添加剂",
+          "昨日高振幅",
+          "昨日首板",
+          "养老金",
+          "病原体防治",
+          "幽门螺杆菌概念",
+          "乳业",
+          "农业种植"
+        ],
+        "resonance_score": 73.0,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 3",
+          "题材热度分 6.76",
+          "共振角色 follower",
+          "属于当前主线题材"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300054",
+        "name": "鼎龙股份",
+        "score": 53.1,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 0.0 百万",
+          "量比 4.06",
+          "叙事强度 0.5",
+          "题材归属 电子"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "电子",
+        "secondary_theme": "电子化学品Ⅱ",
+        "concepts": [
+          "电子",
+          "电子化学品Ⅱ",
+          "电子化学品Ⅲ",
+          "富时罗素",
+          "中证500",
+          "创业成份",
+          "深成500",
+          "转债标的",
+          "显示技术",
+          "柔性屏(折叠屏)",
+          "中芯概念",
+          "半导体概念",
+          "光刻机(胶)",
+          "国产芯片",
+          "OLED"
+        ],
+        "resonance_score": 65.0,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 5.92",
+          "共振角色 follower"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300054",
+        "name": "鼎龙股份",
+        "score": 44.8,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 电子"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "电子",
+        "secondary_theme": "电子化学品Ⅱ",
+        "concepts": [
+          "电子",
+          "电子化学品Ⅱ",
+          "电子化学品Ⅲ",
+          "富时罗素",
+          "中证500",
+          "创业成份",
+          "深成500",
+          "转债标的",
+          "显示技术",
+          "柔性屏(折叠屏)",
+          "中芯概念",
+          "半导体概念",
+          "光刻机(胶)",
+          "国产芯片",
+          "OLED"
+        ],
+        "resonance_score": 65.0,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 5.92",
+          "共振角色 follower"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "301292",
+        "name": "海科新源",
+        "score": 75.3,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 0",
+          "竞价强度 0.5",
+          "封单强度 0.5",
+          "题材归属 电力设备"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "电力设备",
+        "secondary_theme": "电池",
+        "concepts": [
+          "电力设备",
+          "电池",
+          "电池化学品",
+          "昨日高振幅",
+          "昨日高换手",
+          "昨日炸板",
+          "专精特新",
+          "昨日触板",
+          "QFII重仓",
+          "电池技术",
+          "化妆品概念",
+          "固态电池",
+          "新能源车",
+          "特斯拉概念",
+          "锂电池概念",
+          "化工原料"
+        ],
+        "resonance_score": 50.2,
+        "resonance_level": "C",
+        "resonance_role": "noise",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 6",
+          "题材热度分 5.83",
+          "共振角色 noise"
+        ]
+      }
+    ],
+    "summary_cn": "2026-03-27 市场处于冰点阶段，涨停 50 家，跌停 0 家，最高连板 0。当前优先关注强共振候选：海辰药业(300584)、舒泰神(300204)、诚达药业(301201)。其中优先看主线题材内的主线龙头/前排核心，弱共振或噪声信号如 暂无明显回避标的 更适合观察而非追击。整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。",
+    "summary_en": "On 2026-03-27, the market is in ice stage. There are 50 limit-up stocks, 0 limit-down stocks, and the highest board is 0. Priority goes to high-resonance names: 海辰药业(300584)、舒泰神(300204)、诚达药业(301201). Prefer mainline leaders/frontline core setups, while weaker names such as 暂无明显回避标的 are better treated as watch-only. Use this as a research and next-day validation framework, not a fully automated execution trigger.",
+    "mainline_themes": [
+      "医药",
+      "基础化工",
+      "电子"
+    ],
+    "focus_candidates": [
+      "海辰药业(300584)",
+      "舒泰神(300204)",
+      "诚达药业(301201)"
+    ],
+    "observe_candidates": [
+      "海科新源(301292)"
+    ],
+    "avoid_candidates": [],
+    "tomorrow_plan": [
+      "优先盯住主线题材：医药、基础化工。",
+      "重点跟踪强共振候选的竞价、承接和回封质量：海辰药业(300584)、舒泰神(300204)。",
+      "情绪仍偏冰点，适合轻仓试错，不宜把弱共振信号当成进攻主仓。"
+    ]
+  }
+}
