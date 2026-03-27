@@ -4,7 +4,7 @@ import json
 from typing import Any
 
 from packages.python.exit_engine import evaluate_exit_decision
-from packages.python.storage import get_conn, init_db
+from packages.python.storage import get_conn, init_db, save_paper_trade_attribution
 
 
 def _find_candidate_price(symbol: str, stocks: list[dict[str, Any]]) -> float:
@@ -80,6 +80,22 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                     'to_weight_pct': reduced_weight,
                     'reason': 'partial_take_profit',
                 })
+                save_paper_trade_attribution({
+                    'trade_date': trade_date,
+                    'symbol': position['symbol'],
+                    'name': position['name'],
+                    'action': 'partial_take_profit',
+                    'lifecycle_state': 'scaled_out',
+                    'reason': 'partial_take_profit',
+                    'return_pct': ret_pct,
+                    'peak_return_pct': peak_return_pct,
+                    'weight_before_pct': current_weight,
+                    'weight_after_pct': reduced_weight,
+                    'meta': {
+                        'risk_mode': risk_mode,
+                        'thresholds': decision.get('thresholds') or {},
+                    },
+                }, conn=conn)
                 continue
             if decision['should_close']:
                 reason = str(decision['reason'])
@@ -122,6 +138,23 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                     'realized_return_pct': ret_pct,
                     'exit_reason': exit_note,
                 })
+                save_paper_trade_attribution({
+                    'trade_date': trade_date,
+                    'symbol': position['symbol'],
+                    'name': position['name'],
+                    'action': 'full_exit',
+                    'lifecycle_state': 'closed',
+                    'reason': reason,
+                    'return_pct': ret_pct,
+                    'peak_return_pct': peak_return_pct,
+                    'weight_before_pct': float(position['target_weight_pct']),
+                    'weight_after_pct': 0.0,
+                    'meta': {
+                        'risk_mode': risk_mode,
+                        'exit_note': exit_note,
+                        'thresholds': decision.get('thresholds') or {},
+                    },
+                }, conn=conn)
                 continue
 
             planned = planned_by_symbol.get(position['symbol'])

@@ -110,6 +110,25 @@ def init_db() -> None:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS paper_trade_attribution (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                trade_date TEXT NOT NULL,
+                symbol TEXT NOT NULL,
+                name TEXT NOT NULL,
+                action TEXT NOT NULL,
+                lifecycle_state TEXT,
+                reason TEXT,
+                return_pct REAL,
+                peak_return_pct REAL,
+                weight_before_pct REAL,
+                weight_after_pct REAL,
+                meta_json TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
 
 
 def save_pipeline_run(payload: dict[str, Any]) -> int:
@@ -296,5 +315,57 @@ def list_validation_signal_details(limit: int = 500) -> list[dict[str, Any]]:
                 item['market'] = json.loads(item.pop('market_json'))
             except Exception:
                 item['market'] = {}
+            items.append(item)
+        return items
+
+
+def save_paper_trade_attribution(payload: dict[str, Any], conn: sqlite3.Connection | None = None) -> int:
+    init_db()
+    own_conn = conn is None
+    active_conn = conn or get_conn()
+    try:
+        cur = active_conn.execute(
+            """
+            INSERT INTO paper_trade_attribution (
+                trade_date, symbol, name, action, lifecycle_state, reason, return_pct,
+                peak_return_pct, weight_before_pct, weight_after_pct, meta_json
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                payload['trade_date'],
+                payload['symbol'],
+                payload['name'],
+                payload['action'],
+                payload.get('lifecycle_state', ''),
+                payload.get('reason', ''),
+                payload.get('return_pct'),
+                payload.get('peak_return_pct'),
+                payload.get('weight_before_pct'),
+                payload.get('weight_after_pct'),
+                json.dumps(payload.get('meta') or {}, ensure_ascii=False),
+            ),
+        )
+        if own_conn:
+            active_conn.commit()
+        return int(cur.lastrowid)
+    finally:
+        if own_conn:
+            active_conn.close()
+
+
+def list_paper_trade_attribution(limit: int = 200) -> list[dict[str, Any]]:
+    init_db()
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT * FROM paper_trade_attribution ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        items: list[dict[str, Any]] = []
+        for row in rows:
+            item = dict(row)
+            try:
+                item['meta'] = json.loads(item.pop('meta_json') or '{}')
+            except Exception:
+                item['meta'] = {}
             items.append(item)
         return items

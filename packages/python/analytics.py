@@ -5,6 +5,7 @@ from statistics import mean
 from typing import Any
 
 from packages.python.storage import list_validations
+from packages.python.lifecycle_analytics import trade_lifecycle_summary
 
 
 def strategy_performance_summary(limit: int = 500) -> list[dict[str, Any]]:

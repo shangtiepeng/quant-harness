@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
 from collections import Counter
 
 from packages.python.analytics import strategy_performance_summary
+from packages.python.lifecycle_analytics import trade_lifecycle_summary
 from packages.python.auto_trading import auto_trade_snapshot, execution_control_matrix, run_auto_trading
 from packages.python.backtest import backtest_signals
 from packages.python.daily_jobs import run_daily_job
@@ -216,5 +217,10 @@ def analytics_backtest(limit: int = 50, kline_days: int = 30):
 @app.get("/api/analytics/resonance-validation")
 def analytics_resonance_validation(limit: int = 500):
     return resonance_validation_summary(limit=limit)
+
+
+@app.get("/api/analytics/trade-lifecycle")
+def analytics_trade_lifecycle(limit: int = 200):
+    return trade_lifecycle_summary(limit=limit)
 
 
