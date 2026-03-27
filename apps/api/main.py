@@ -24,6 +24,7 @@ from packages.python.report_archive import list_archived_reports, read_archived_
 from packages.python.resonance_analytics import resonance_validation_summary
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.strategy_portfolios import strategy_portfolio_summary
+from packages.python.portfolio_evaluator import evaluate_strategy_portfolios
 from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
@@ -122,6 +123,11 @@ def auto_trading_run(mode: str = "hybrid", limit: int = 50):
 @app.get("/api/strategy-portfolios/summary")
 def strategy_portfolios_summary(limit: int = 20):
     return strategy_portfolio_summary(limit=limit)
+
+
+@app.get("/api/strategy-portfolios/evaluator")
+def strategy_portfolios_evaluator(limit: int = 120):
+    return evaluate_strategy_portfolios(limit=limit)
 
 
 @app.get("/api/themes/heat")
