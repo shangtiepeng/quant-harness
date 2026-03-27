@@ -3,18 +3,8 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from packages.python.exit_engine import evaluate_exit_decision
 from packages.python.storage import get_conn, init_db
-
-
-MAX_HOLD_DAYS = 5
-STOP_LOSS_PCT = -5.0
-TAKE_PROFIT_PCT = 12.0
-RISK_MODE_HOLD_LIMIT = {
-    'defensive_probe': 3,
-    'risk_control': 4,
-    'selective_attack': 5,
-    'active_attack': 5,
-}
 
 
 def _find_candidate_price(symbol: str, stocks: list[dict[str, Any]]) -> float:
@@ -58,35 +48,31 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
             current_price = _find_candidate_price(position['symbol'], stocks)
             if current_price <= 0:
                 continue
-            entry_price = float(position['entry_price'])
-            ret_pct = round((current_price / entry_price - 1) * 100, 2)
-            hold_days = max(0, int(trade_date.replace('-', '')) - int(position['opened_trade_date'].replace('-', '')))
-            hold_limit = RISK_MODE_HOLD_LIMIT.get(risk_mode, MAX_HOLD_DAYS)
-            removed_from_plan = position['symbol'] not in planned_by_symbol
             planned = planned_by_symbol.get(position['symbol'])
-            resonance_drop = bool(planned) and planned.get('resonance_level') in {'C', 'D'}
-            role_break = bool(planned) and planned.get('role') in {'noise', 'follower'} and risk_mode in {'defensive_probe', 'risk_control'}
-            should_close = (
-                ret_pct <= STOP_LOSS_PCT
-                or ret_pct >= TAKE_PROFIT_PCT
-                or hold_days >= hold_limit
-                or removed_from_plan
-                or resonance_drop
-                or role_break
+            decision = evaluate_exit_decision(
+                trade_date=trade_date,
+                risk_mode=risk_mode,
+                current_price=current_price,
+                position=position,
+                planned=planned,
             )
-            if should_close:
-                if removed_from_plan:
+            ret_pct = float(decision['return_pct'])
+            if decision['should_close']:
+                reason = str(decision['reason'])
+                if reason == 'plan_removed':
                     exit_note = 'paper_rebalance_exit'
-                elif resonance_drop:
+                elif reason == 'resonance_drop':
                     exit_note = 'paper_resonance_exit'
-                elif role_break:
+                elif reason == 'role_break':
                     exit_note = 'paper_riskmode_exit'
-                elif hold_days >= hold_limit:
+                elif reason == 'time_exit':
                     exit_note = 'paper_time_exit'
-                elif ret_pct <= STOP_LOSS_PCT:
+                elif reason == 'stop_loss':
                     exit_note = 'paper_stop_loss'
-                elif ret_pct >= TAKE_PROFIT_PCT:
+                elif reason == 'take_profit':
                     exit_note = 'paper_take_profit'
+                elif reason == 'rebalance_down':
+                    exit_note = 'paper_rebalance_down_exit'
                 else:
                     exit_note = 'paper_exit'
                 conn.execute(
@@ -106,6 +92,7 @@ def run_paper_execution(payload: dict[str, Any], stocks: list[dict[str, Any]]) -
                     'name': position['name'],
                     'exit_price': current_price,
                     'realized_return_pct': ret_pct,
+                    'exit_reason': exit_note,
                 })
                 continue
 
