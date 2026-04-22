@@ -2,28 +2,50 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Alert, Button, Card, Descriptions, Layout, Space, Typography } from 'antd'
+import { Alert, Button, Card, Descriptions, Layout, Space, Spin, Typography } from 'antd'
 
 const { Header, Content } = Layout
-const { Title, Paragraph } = Typography
+const { Title, Paragraph, Text } = Typography
 
 export default function RunJobPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<any>(null)
   const [error, setError] = useState('')
+  const [statusText, setStatusText] = useState('')
 
   async function runJob() {
     setLoading(true)
     setError('')
+    setResult(null)
+    setStatusText('正在执行盘后任务，这可能需要 10~60 秒，请稍等…')
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 90_000)
+
     try {
       const res = await fetch('http://127.0.0.1:8010/api/jobs/daily-run', {
         method: 'POST',
+        signal: controller.signal,
       })
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
+      }
+
       const json = await res.json()
       setResult(json)
-    } catch {
-      setError('执行失败，请确认 API 已启动。')
+      setStatusText('执行完成。')
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('执行超时：任务仍可能在后台运行，请稍后查看 Reports 页面或重试。')
+      } else if (err instanceof Error) {
+        setError(`执行失败：${err.message}`)
+      } else {
+        setError('执行失败，请确认 API 已启动。')
+      }
+      setStatusText('')
     } finally {
+      clearTimeout(timeoutId)
       setLoading(false)
     }
   }
@@ -43,10 +65,20 @@ export default function RunJobPage() {
           <Card>
             <Title level={2}>Run Daily Job</Title>
             <Paragraph>点击按钮执行一次完整盘后任务：采集、归档、验证、生成日报。</Paragraph>
-            <Button type="primary" onClick={runJob} loading={loading}>Run Daily Job</Button>
+            <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+              <Button type="primary" onClick={runJob} loading={loading} disabled={loading}>
+                {loading ? 'Running…' : 'Run Daily Job'}
+              </Button>
+              {statusText ? (
+                <Text type={loading ? 'secondary' : undefined}>
+                  {statusText}
+                </Text>
+              ) : null}
+              {loading ? <Spin tip="任务执行中…" /> : null}
+            </Space>
           </Card>
 
-          {error ? <Alert type="error" title={error} /> : null}
+          {error ? <Alert type="error" title={error} showIcon /> : null}
 
           {result ? (
             <Card title="Execution Result">
@@ -64,7 +96,7 @@ export default function RunJobPage() {
                 <Descriptions.Item label="JSON Archive">{result.archive?.json_path}</Descriptions.Item>
                 <Descriptions.Item label="Markdown Archive">{result.archive?.md_path}</Descriptions.Item>
               </Descriptions>
-              <Alert style={{ marginTop: 16 }} type="info" title={result.report?.summary_cn} />
+              <Alert style={{ marginTop: 16 }} type="info" title={result.report?.summary_cn} showIcon />
             </Card>
           ) : null}
         </Space>
