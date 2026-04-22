@@ -54,9 +54,9 @@ def auto_trade_snapshot(mode: str | None = None, limit: int = 50) -> dict[str, A
     }
 
 
-def run_auto_trading(mode: str | None = None, limit: int = 50) -> dict[str, Any]:
+def run_auto_trading(mode: str | None = None, limit: int = 50, payload: dict[str, Any] | None = None) -> dict[str, Any]:
     normalized_mode = _normalize_mode(mode)
-    payload = run_pipeline(limit=limit, persist=True)
+    payload = payload or run_pipeline(limit=limit, persist=True)
     market_stocks, market_meta = load_market_data(limit=limit)
     stocks = [s.model_dump() for s in market_stocks]
 
@@ -80,7 +80,7 @@ def run_auto_trading(mode: str | None = None, limit: int = 50) -> dict[str, Any]
         }
 
     if normalized_mode in {'strategy_portfolios', 'hybrid'}:
-        strategy_summary = run_strategy_portfolios()
+        strategy_summary = run_strategy_portfolios(payload=payload)
         strategy_result = {
             'enabled': True,
             'summary': strategy_summary,

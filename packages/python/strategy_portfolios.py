@@ -3,9 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from packages.python.execution.pipeline import run_pipeline
 from packages.python.exit_engine import evaluate_exit_decision
-from packages.python.paper_execution import _find_candidate_price  # type: ignore
 from packages.python.storage import get_conn, init_db
 
 
@@ -155,23 +153,50 @@ def _target_candidates_for_portfolio(candidates: list[dict[str, Any]], portfolio
 
 
 def _current_prices(stocks: list[dict[str, Any]]) -> dict[str, float]:
-    return {item['symbol']: float(item.get('close') or 0) for item in stocks}
+    return {item['symbol']: float(item.get('close') or 0) for item in stocks if item.get('symbol')}
 
 
-def run_strategy_portfolios() -> dict[str, Any]:
-    bootstrap_strategy_portfolios()
-    payload = run_pipeline()
-    trade_date = payload['trade_date']
-    stocks = payload.get('signals') or []
-    market_payload = run_pipeline()
-    candidates = market_payload.get('candidates') or []
-    market_stocks = [
-        {
-            'symbol': signal['symbol'],
-            'close': signal.get('close', 0),
+def _build_market_stocks(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    market = payload.get('market') or {}
+    by_symbol: dict[str, dict[str, Any]] = {}
+
+    for key in ('top_gainers', 'top_losers'):
+        for item in market.get(key) or []:
+            symbol = item.get('symbol')
+            if not symbol:
+                continue
+            by_symbol[symbol] = {
+                'symbol': symbol,
+                'close': float(item.get('close') or 0),
+            }
+
+    for item in payload.get('candidates') or []:
+        symbol = item.get('symbol')
+        if not symbol or symbol in by_symbol:
+            continue
+        by_symbol[symbol] = {
+            'symbol': symbol,
+            'close': float(item.get('close') or 0),
         }
-        for signal in stocks
-    ]
+
+    for item in payload.get('signals') or []:
+        symbol = item.get('symbol')
+        if not symbol or symbol in by_symbol:
+            continue
+        by_symbol[symbol] = {
+            'symbol': symbol,
+            'close': float(item.get('close') or 0),
+        }
+
+    return list(by_symbol.values())
+
+
+def run_strategy_portfolios(payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    bootstrap_strategy_portfolios()
+    payload = payload or {'trade_date': '', 'candidates': [], 'signals': [], 'market': {}}
+    trade_date = payload.get('trade_date') or ''
+    candidates = payload.get('candidates') or []
+    market_stocks = _build_market_stocks(payload)
     price_map = _current_prices(market_stocks)
 
     with get_conn() as conn:

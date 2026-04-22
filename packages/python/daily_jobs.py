@@ -12,7 +12,7 @@ def run_daily_job() -> dict[str, Any]:
     payload = run_pipeline(persist=True)
     run_id = payload["run_id"]
     validations = validate_run(run_id)
-    auto_trading = run_auto_trading(mode='hybrid')
+    auto_trading = run_auto_trading(mode='hybrid', payload=payload)
     result = {
         "run_id": run_id,
         "trade_date": payload["trade_date"],
