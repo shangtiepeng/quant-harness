@@ -11,7 +11,7 @@ from packages.python.strategies.resonance import build_theme_heat_map
 from packages.python.strategies.sentiment import compute_market_overview
 
 
-def run_pipeline(limit: int = 50, persist: bool = False):
+def run_pipeline(limit: int = 50, persist: bool = False, include_portfolio: bool = True):
     stocks, meta = load_market_data(limit=limit)
     trade_date = meta["trade_date"]
     market = compute_market_overview(stocks, trade_date)
@@ -21,7 +21,7 @@ def run_pipeline(limit: int = 50, persist: bool = False):
     signals = sorted(leader_signals + hotmoney_signals, key=lambda s: (s.resonance_score, s.score), reverse=True)
     signal_dicts = [s.model_dump() for s in signals]
     candidates = aggregate_signal_candidates(signal_dicts)
-    portfolio_plan = build_portfolio_plan(market.model_dump(), candidates)
+    portfolio_plan = build_portfolio_plan(market.model_dump(), candidates) if include_portfolio else None
     report = build_daily_report(trade_date, market, signals)
 
     payload = {

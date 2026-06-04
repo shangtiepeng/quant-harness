@@ -49,13 +49,13 @@ def health():
 
 @app.get("/api/meta")
 def meta():
-    payload = run_pipeline()
+    payload = run_pipeline(include_portfolio=False)
     return payload["meta"]
 
 
 @app.get("/api/market/overview")
 def market_overview():
-    payload = run_pipeline()
+    payload = run_pipeline(include_portfolio=False)
     return payload["market"]
 
 
@@ -70,13 +70,13 @@ def debug_raw_market(limit: int = 20):
 
 @app.get("/api/signals")
 def signals():
-    payload = run_pipeline()
+    payload = run_pipeline(include_portfolio=False)
     return payload["signals"]
 
 
 @app.get("/api/candidates")
 def candidates():
-    payload = run_pipeline()
+    payload = run_pipeline(include_portfolio=False)
     return payload["candidates"]
 
 
@@ -184,7 +184,7 @@ def research_sector_growth(
 
 @app.get("/api/report/daily")
 def daily_report():
-    payload = run_pipeline()
+    payload = run_pipeline(include_portfolio=False)
     return payload["report"]
 
 
