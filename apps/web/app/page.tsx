@@ -16,7 +16,8 @@ import {
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { apiUrl } from './config'
+import { apiConnectionError, fetchApi } from './config'
+import { SITE_NAME } from './branding'
 import { AppShell, MetricCard, PageIntro } from './components/AppShell'
 
 const { Paragraph, Text, Title } = Typography
@@ -148,18 +149,8 @@ export default function Page() {
       setLoading(true)
       setError('')
 
-      const fetchJson = async <T,>(path: string, fallback: T): Promise<T> => {
-        try {
-          const res = await fetch(apiUrl(path))
-          if (!res.ok) return fallback
-          return (await res.json()) as T
-        } catch {
-          return fallback
-        }
-      }
-
       try {
-        const openApi = await fetchJson<{ paths?: Record<string, unknown> }>('/openapi.json', { paths: {} })
+        const openApi = await fetchApi<{ paths?: Record<string, unknown> }>('/openapi.json')
         const paths = openApi?.paths || {}
         const hasPath = (path: string) => Boolean(paths[path])
 
@@ -178,19 +169,19 @@ export default function Page() {
           performance,
           themeHeatPayload,
         ] = await Promise.all([
-          fetchJson<ApiRecord | null>('/api/meta', null),
-          fetchJson<ApiRecord | null>('/api/market/overview', null),
-          fetchJson<ApiRecord[]>('/api/signals', []),
-          hasPath('/api/candidates') ? fetchJson<ApiRecord[]>('/api/candidates', []) : Promise.resolve([]),
-          hasPath('/api/portfolio-plan') ? fetchJson<ApiRecord | null>('/api/portfolio-plan', null) : Promise.resolve(null),
-          hasPath('/api/paper/summary') ? fetchJson<ApiRecord | null>('/api/paper/summary', null) : Promise.resolve(null),
-          hasPath('/api/paper/positions') ? fetchJson<ApiRecord[]>('/api/paper/positions', []) : Promise.resolve([]),
-          hasPath('/api/paper/trades') ? fetchJson<ApiRecord[]>('/api/paper/trades', []) : Promise.resolve([]),
-          fetchJson<ApiRecord | null>('/api/report/daily', null),
-          fetchJson<ApiRecord[]>('/api/history/runs', []),
-          fetchJson<ApiRecord[]>('/api/history/validations', []),
-          fetchJson<ApiRecord[]>('/api/analytics/strategy-performance', []),
-          fetchJson<{ items?: ApiRecord[] }>('/api/themes/heat', { items: [] }),
+          fetchApi<ApiRecord | null>('/api/meta', null),
+          fetchApi<ApiRecord | null>('/api/market/overview', null),
+          fetchApi<ApiRecord[]>('/api/signals', []),
+          hasPath('/api/candidates') ? fetchApi<ApiRecord[]>('/api/candidates', []) : Promise.resolve([]),
+          hasPath('/api/portfolio-plan') ? fetchApi<ApiRecord | null>('/api/portfolio-plan', null) : Promise.resolve(null),
+          hasPath('/api/paper/summary') ? fetchApi<ApiRecord | null>('/api/paper/summary', null) : Promise.resolve(null),
+          hasPath('/api/paper/positions') ? fetchApi<ApiRecord[]>('/api/paper/positions', []) : Promise.resolve([]),
+          hasPath('/api/paper/trades') ? fetchApi<ApiRecord[]>('/api/paper/trades', []) : Promise.resolve([]),
+          fetchApi<ApiRecord | null>('/api/report/daily', null),
+          fetchApi<ApiRecord[]>('/api/history/runs', []),
+          fetchApi<ApiRecord[]>('/api/history/validations', []),
+          fetchApi<ApiRecord[]>('/api/analytics/strategy-performance', []),
+          fetchApi<{ items?: ApiRecord[] }>('/api/themes/heat', { items: [] }),
         ])
 
         if (ignore) return
@@ -212,7 +203,7 @@ export default function Page() {
         })
       } catch (err) {
         if (!ignore) {
-          setError(err instanceof Error ? err.message : '加载失败')
+          setError(err instanceof Error ? err.message : apiConnectionError().message)
         }
       } finally {
         if (!ignore) {
@@ -266,7 +257,7 @@ export default function Page() {
   }, [candidates, selectedSignalKey])
 
   const selectedSignal = candidates.find((item) => item.key === selectedSignalKey) || null
-  const themeHeat = data.themeHeat.map((record) => ({ ...record, key: asString(record.theme, String(Math.random())) }))
+  const themeHeat = data.themeHeat.map((record, index) => ({ ...record, key: asString(record.theme, `theme-${index}`) }))
   const mainlineThemes = data.themeHeat.filter((item) => Boolean(item.is_mainline)).map((item) => asString(item.theme))
   const selectedThemePeers = selectedSignal
     ? candidates.filter((item) => item.key !== selectedSignal.key && item.theme === selectedSignal.theme)
@@ -365,7 +356,7 @@ export default function Page() {
   ]
 
   const runColumns: ColumnsType<TableRow> = [
-    { title: 'Run ID', dataIndex: 'id', key: 'id', width: 220 },
+    { title: '运行 ID', dataIndex: 'id', key: 'id', width: 220 },
     { title: '日期', dataIndex: 'trade_date', key: 'trade_date', width: 130 },
     { title: '数据源', dataIndex: 'source', key: 'source', width: 120 },
     { title: '创建时间', dataIndex: 'created_at', key: 'created_at', width: 220 },
@@ -383,10 +374,10 @@ export default function Page() {
   const perfColumns: ColumnsType<TableRow> = [
     { title: '策略', dataIndex: 'strategy', key: 'strategy', width: 120 },
     { title: '样本数', dataIndex: 'count', key: 'count', width: 100 },
-    { title: 'Avg 1D', dataIndex: 'avg_return_1d', key: 'avg_return_1d', width: 110 },
-    { title: 'Avg 3D', dataIndex: 'avg_return_3d', key: 'avg_return_3d', width: 110 },
-    { title: 'Avg 5D', dataIndex: 'avg_return_5d', key: 'avg_return_5d', width: 110 },
-    { title: 'Win Rate 1D', dataIndex: 'win_rate_1d', key: 'win_rate_1d', width: 130 },
+    { title: '1日均值', dataIndex: 'avg_return_1d', key: 'avg_return_1d', width: 110 },
+    { title: '3日均值', dataIndex: 'avg_return_3d', key: 'avg_return_3d', width: 110 },
+    { title: '5日均值', dataIndex: 'avg_return_5d', key: 'avg_return_5d', width: 110 },
+    { title: '1日胜率', dataIndex: 'win_rate_1d', key: 'win_rate_1d', width: 130 },
   ]
 
   const themeHeatColumns: ColumnsType<TableRow> = [
@@ -436,47 +427,55 @@ export default function Page() {
     <AppShell>
       <Space orientation="vertical" size={16} style={{ width: '100%' }}>
         <PageIntro
-          eyebrow="Dashboard"
-          title="Quant Harness Dashboard"
+          eyebrow="首页"
+          title={SITE_NAME}
           description="研究优先的 A 股战法系统：汇总市场情绪、策略共振、组合建议、模拟持仓和验证表现。"
         />
 
         {error ? <Alert type="error" showIcon title="加载失败" description={error} /> : null}
+        {asString(data.meta?.source) === 'sample_fallback' ? (
+          <Alert
+            type="warning"
+            showIcon
+            title="当前使用兜底样本"
+            description="真实行情源暂时不可用，系统正在使用内置真实 A 股样本保持页面可运行；样本仅用于功能演示和策略流程验证，不代表实时市场推荐。"
+          />
+        ) : null}
 
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} xl={6}>
-            <MetricCard title="Data Source" value={asString(data.meta?.source, 'N/A')} />
+            <MetricCard title="数据源" value={asString(data.meta?.source, '暂无')} />
           </Col>
           <Col xs={24} sm={12} xl={6}>
-            <MetricCard title="Trade Date" value={asString(data.meta?.trade_date, 'N/A')} />
+            <MetricCard title="交易日" value={asString(data.meta?.trade_date, '暂无')} />
           </Col>
           <Col xs={24} sm={12} xl={6}>
-            <MetricCard title="Sentiment" value={asString(data.market?.market_sentiment_stage, 'N/A')} />
+            <MetricCard title="情绪阶段" value={asString(data.market?.market_sentiment_stage, '暂无')} />
           </Col>
           <Col xs={24} sm={12} xl={6}>
-            <MetricCard title="Highest Board" value={asNumber(data.market?.highest_board)} />
+            <MetricCard title="最高连板" value={asNumber(data.market?.highest_board)} />
           </Col>
         </Row>
 
         <Card title="今日策略组合建议" loading={loading}>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Risk Mode" value={asString(data.portfolioPlan?.risk_mode, 'N/A')} />
+              <MetricCard title="风险模式" value={asString(data.portfolioPlan?.risk_mode, '暂无')} />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Exec Policy" value={asString(data.portfolioPlan?.execution_policy, 'N/A')} />
+              <MetricCard title="执行策略" value={asString(data.portfolioPlan?.execution_policy, '暂无')} />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Risk Budget" value={asNumber(data.portfolioPlan?.risk_budget_pct)} suffix="%" />
+              <MetricCard title="风险预算" value={asNumber(data.portfolioPlan?.risk_budget_pct)} suffix="%" />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Max Positions" value={asNumber(data.portfolioPlan?.max_positions)} />
+              <MetricCard title="最大持仓数" value={asNumber(data.portfolioPlan?.max_positions)} />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Theme Cap" value={asNumber(data.portfolioPlan?.max_theme_exposure_pct)} suffix="%" />
+              <MetricCard title="单题材上限" value={asNumber(data.portfolioPlan?.max_theme_exposure_pct)} suffix="%" />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="No Trade" value={data.portfolioPlan?.no_trade ? 'YES' : 'NO'} />
+              <MetricCard title="禁止交易" value={data.portfolioPlan?.no_trade ? '是' : '否'} />
             </Col>
           </Row>
 
@@ -511,31 +510,31 @@ export default function Page() {
           </Space>
         </Card>
 
-        <Card title="Paper Portfolio" loading={loading}>
+        <Card title="模拟组合" loading={loading}>
           <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Open Positions" value={asNumber(data.paperSummary?.open_positions)} />
+              <MetricCard title="持仓中" value={asNumber(data.paperSummary?.open_positions)} />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Closed Positions" value={asNumber(data.paperSummary?.closed_positions)} />
+              <MetricCard title="已平仓" value={asNumber(data.paperSummary?.closed_positions)} />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Open Weight" value={asNumber(data.paperSummary?.open_weight_pct)} suffix="%" />
+              <MetricCard title="当前仓位" value={asNumber(data.paperSummary?.open_weight_pct)} suffix="%" />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Unrealized" value={asNumber(data.paperSummary?.unrealized_pnl_pct)} suffix="%" />
+              <MetricCard title="浮动收益" value={asNumber(data.paperSummary?.unrealized_pnl_pct)} suffix="%" />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Realized" value={asNumber(data.paperSummary?.realized_pnl_pct)} suffix="%" />
+              <MetricCard title="已实现收益" value={asNumber(data.paperSummary?.realized_pnl_pct)} suffix="%" />
             </Col>
             <Col xs={24} sm={12} xl={4}>
-              <MetricCard title="Win Rate" value={asNumber(data.paperSummary?.win_rate_pct)} suffix="%" />
+              <MetricCard title="胜率" value={asNumber(data.paperSummary?.win_rate_pct)} suffix="%" />
             </Col>
           </Row>
           <Row gutter={[16, 16]}>
             <Col xs={24} xl={12}>
               <div className="embedded-panel">
-                <Text strong>Open Positions</Text>
+                <Text strong>当前持仓</Text>
                 <Table
                   className="app-table"
                   pagination={false}
@@ -548,7 +547,7 @@ export default function Page() {
             </Col>
             <Col xs={24} xl={12}>
               <div className="embedded-panel">
-                <Text strong>Recent Paper Trades</Text>
+                <Text strong>近期模拟交易</Text>
                 <Table
                   className="app-table"
                   pagination={false}
@@ -562,9 +561,8 @@ export default function Page() {
           </Row>
         </Card>
 
-        <Card title="Daily Report" loading={loading}>
+        <Card title="今日研究摘要" loading={loading}>
           <Paragraph>{asString(data.report?.summary_cn, '暂无摘要')}</Paragraph>
-          <Paragraph type="secondary">{asString(data.report?.summary_en)}</Paragraph>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12}>
               <Text strong>主线题材</Text>
@@ -709,18 +707,18 @@ export default function Page() {
 
         <Row gutter={[16, 16]}>
           <Col xs={24} xl={10}>
-            <Card title="Historical Runs" loading={loading}>
+            <Card title="历史运行" loading={loading}>
               <Table className="app-table" columns={runColumns} dataSource={runs} pagination={{ pageSize: 5 }} scroll={{ x: 690 }} />
             </Card>
           </Col>
           <Col xs={24} xl={14}>
-            <Card title="Validation Results" loading={loading}>
+            <Card title="验证结果" loading={loading}>
               <Table className="app-table" columns={validationColumns} dataSource={validations} pagination={{ pageSize: 5 }} scroll={{ x: 720 }} />
             </Card>
           </Col>
         </Row>
 
-        <Card title="Strategy Performance" loading={loading}>
+        <Card title="策略表现">
           <Table className="app-table" columns={perfColumns} dataSource={performance} pagination={false} scroll={{ x: 690 }} />
         </Card>
       </Space>

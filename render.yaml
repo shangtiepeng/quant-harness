@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: quant-harness-api
+    name: jitouradar-api
     runtime: python
     rootDir: .
     plan: free
@@ -9,3 +9,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
+      - key: MARKET_DATA_PROVIDER_ORDER
+        value: eastmoney,akshare,sample

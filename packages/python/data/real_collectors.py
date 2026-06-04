@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
+import os
 from typing import Any
 
 import httpx
@@ -47,6 +48,13 @@ THEME_EXCLUDE_KEYWORDS = [
     '东方财富热股',
 ]
 
+VALID_A_SHARE_PREFIXES = (
+    '000', '001', '002', '003',
+    '300', '301',
+    '600', '601', '603', '605',
+    '688',
+)
+
 
 def infer_theme(name: str, symbol: str = '') -> str:
     text = f'{name}{symbol}'
@@ -76,6 +84,10 @@ def simplify_board_name(board_name: str) -> str:
         '专用设备': '高端制造',
     }
     return replacements.get(board_name, board_name)
+
+
+def is_valid_a_share_symbol(symbol: str) -> bool:
+    return symbol.isdigit() and len(symbol) == 6 and symbol.startswith(VALID_A_SHARE_PREFIXES)
 
 
 def fetch_professional_concepts(symbol: str, client: httpx.Client) -> list[str]:
@@ -117,6 +129,8 @@ def _normalize_records(records: list[dict[str, Any]], professional_concept_map: 
         volume_ratio = float(item.get('量比', item.get('volume_ratio', 1)) or 1)
         symbol = str(item.get('代码', item.get('symbol', '')))
         name = str(item.get('名称', item.get('name', '未知标的')))
+        if not is_valid_a_share_symbol(symbol) or not name or name == '未知标的':
+            continue
         raw_theme = item.get('theme')
         theme = str(raw_theme).strip() if raw_theme not in (None, '') else ''
         concepts = professional_concept_map.get(symbol, [])
@@ -209,12 +223,20 @@ def try_fetch_with_eastmoney(limit: int = 50) -> tuple[list[StockSnapshot], str]
 
 
 def load_market_data(limit: int = 50) -> tuple[list[StockSnapshot], dict[str, str]]:
-    stocks, source = try_fetch_with_akshare(limit=limit)
-    if stocks:
-        return stocks, {'source': source, 'trade_date': str(date.today())}
+    provider_order = os.getenv('MARKET_DATA_PROVIDER_ORDER', 'eastmoney,akshare,sample')
+    providers = [item.strip().lower() for item in provider_order.split(',') if item.strip()]
 
-    stocks, source = try_fetch_with_eastmoney(limit=limit)
-    if stocks:
-        return stocks, {'source': source, 'trade_date': str(date.today())}
+    for provider in providers:
+        if provider == 'eastmoney':
+            stocks, source = try_fetch_with_eastmoney(limit=limit)
+        elif provider == 'akshare':
+            stocks, source = try_fetch_with_akshare(limit=limit)
+        elif provider == 'sample':
+            stocks, source = load_sample_market(), 'sample_fallback'
+        else:
+            continue
+
+        if stocks:
+            return stocks, {'source': source, 'trade_date': str(date.today())}
 
     return load_sample_market(), {'source': 'sample_fallback', 'trade_date': str(date.today())}

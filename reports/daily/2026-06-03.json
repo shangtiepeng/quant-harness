@@ -1,1357 +1,311 @@
 {
-  "run_id": 32,
+  "run_id": "legacy-fixed",
   "trade_date": "2026-06-03",
-  "source": "sample_fallback",
+  "source": "sample_fallback_valid_a_share",
   "signal_count": 10,
-  "validation_count": 10,
-  "paper_execution": {
-    "enabled": true,
-    "opened": [
-      {
-        "symbol": "000004",
-        "name": "盛景智能",
-        "entry_price": 22.11,
-        "target_weight_pct": 8.0
-      }
-    ],
-    "closed": [
-      {
-        "symbol": "000004",
-        "name": "盛景智能",
-        "exit_price": 22.11,
-        "realized_return_pct": 0.0,
-        "exit_reason": "paper_time_exit"
-      }
-    ],
-    "rebalanced": [],
-    "opened_count": 1,
-    "closed_count": 1,
-    "rebalanced_count": 0,
-    "execution_skipped": false,
-    "execution_policy": "paper_only",
-    "risk_mode": "defensive_probe",
-    "market_stage": "ice",
-    "summary": {
-      "open_positions": 4,
-      "closed_positions": 13,
-      "open_weight_pct": 8.0,
-      "unrealized_pnl_pct": 0.0,
-      "realized_pnl_pct": 0.0,
-      "total_pnl_pct": 0.0,
-      "win_rate_pct": 0.0,
-      "trade_count": 30
-    },
-    "positions": [
-      {
-        "id": 17,
-        "symbol": "000004",
-        "name": "盛景智能",
-        "opened_trade_date": "2026-06-03",
-        "entry_price": 22.11,
-        "target_weight_pct": 8.0,
-        "status": "open",
-        "theme": "机器人",
-        "strategy_json": "[\"hotmoney\"]",
-        "plan_json": "{\"symbol\": \"000004\", \"name\": \"盛景智能\", \"display\": \"盛景智能 (000004)\", \"theme\": \"机器人\", \"resonance_level\": \"A\", \"resonance_score\": 100.0, \"strategies\": [\"hotmoney\"], \"target_weight_pct\": 8.0, \"role\": \"mainline_leader\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 2.62\", \"sizing_meta\": {\"base_weight_pct\": 10.0, \"quality_multiplier\": 1.18, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-06-03 14:50:48",
-        "closed_trade_date": null,
-        "exit_price": null,
-        "realized_return_pct": null,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 16,
-        "symbol": "301278",
-        "name": "快可电子",
-        "opened_trade_date": "2026-04-22",
-        "entry_price": 44.0,
-        "target_weight_pct": 8.0,
-        "status": "open",
-        "theme": "半导体",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301278\", \"name\": \"快可电子\", \"display\": \"快可电子 (301278)\", \"theme\": \"半导体\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 2 / 题材热度分 14.54\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.37, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-04-22 13:14:28",
-        "closed_trade_date": null,
-        "exit_price": null,
-        "realized_return_pct": null,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 11,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 12.0,
-        "status": "open",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 37.36\"}",
-        "created_at": "2026-03-27 15:31:35",
-        "closed_trade_date": null,
-        "exit_price": null,
-        "realized_return_pct": null,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 5,
-        "symbol": "301587",
-        "name": "中瑞股份",
-        "opened_trade_date": "2026-03-26",
-        "entry_price": 27.03,
-        "target_weight_pct": 12.0,
-        "status": "open",
-        "theme": "电力设备",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301587\", \"name\": \"中瑞股份\", \"display\": \"中瑞股份 (301587)\", \"theme\": \"电力设备\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 12.7\"}",
-        "created_at": "2026-03-26 13:25:46",
-        "closed_trade_date": null,
-        "exit_price": null,
-        "realized_return_pct": null,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 15,
-        "symbol": "301278",
-        "name": "快可电子",
-        "opened_trade_date": "2026-04-22",
-        "entry_price": 44.0,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "半导体",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301278\", \"name\": \"快可电子\", \"display\": \"快可电子 (301278)\", \"theme\": \"半导体\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 2 / 题材热度分 14.54\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.26, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-04-22 13:10:33",
-        "closed_trade_date": "2026-04-22",
-        "exit_price": 44.0,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 14,
-        "symbol": "301278",
-        "name": "快可电子",
-        "opened_trade_date": "2026-04-22",
-        "entry_price": 44.0,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "半导体",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301278\", \"name\": \"快可电子\", \"display\": \"快可电子 (301278)\", \"theme\": \"半导体\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 2 / 题材热度分 14.54\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.26, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-04-22 13:08:23",
-        "closed_trade_date": "2026-04-22",
-        "exit_price": 44.0,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 13,
-        "symbol": "301278",
-        "name": "快可电子",
-        "opened_trade_date": "2026-04-22",
-        "entry_price": 44.0,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "半导体",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301278\", \"name\": \"快可电子\", \"display\": \"快可电子 (301278)\", \"theme\": \"半导体\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 2 / 题材热度分 14.54\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.26, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-04-22 13:07:32",
-        "closed_trade_date": "2026-04-22",
-        "exit_price": 44.0,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 12,
-        "symbol": "000004",
-        "name": "盛景智能",
-        "opened_trade_date": "2026-04-22",
-        "entry_price": 22.11,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "机器人",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"000004\", \"name\": \"盛景智能\", \"display\": \"盛景智能 (000004)\", \"theme\": \"机器人\", \"resonance_level\": \"A\", \"resonance_score\": 100.0, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"mainline_leader\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 2.62\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.26, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-04-22 00:31:57",
-        "closed_trade_date": "2026-06-03",
-        "exit_price": 22.11,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 10,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 29.88\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.37, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-03-27 14:57:31",
-        "closed_trade_date": "2026-03-27",
-        "exit_price": 45.18,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 9,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 29.88\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.37, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-03-27 14:45:15",
-        "closed_trade_date": "2026-03-27",
-        "exit_price": 45.18,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 8,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 29.88\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.37, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-03-27 14:45:00",
-        "closed_trade_date": "2026-03-27",
-        "exit_price": 45.18,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 7,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8.0, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 29.88\", \"sizing_meta\": {\"base_weight_pct\": 12.0, \"quality_multiplier\": 1.37, \"risk_discount\": 1.0, \"allowed_cap_pct\": 8.0}}",
-        "created_at": "2026-03-27 14:40:43",
-        "closed_trade_date": "2026-03-27",
-        "exit_price": 45.18,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 6,
-        "symbol": "300584",
-        "name": "海辰药业",
-        "opened_trade_date": "2026-03-27",
-        "entry_price": 45.18,
-        "target_weight_pct": 12.0,
-        "status": "closed",
-        "theme": "医药",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"300584\", \"name\": \"海辰药业\", \"display\": \"海辰药业 (300584)\", \"theme\": \"医药\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 29.88\"}",
-        "created_at": "2026-03-27 14:21:28",
-        "closed_trade_date": "2026-03-27",
-        "exit_price": 45.18,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 4,
-        "symbol": "301587",
-        "name": "中瑞股份",
-        "opened_trade_date": "2026-03-26",
-        "entry_price": 27.03,
-        "target_weight_pct": 12.0,
-        "status": "closed",
-        "theme": "电力设备",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301587\", \"name\": \"中瑞股份\", \"display\": \"中瑞股份 (301587)\", \"theme\": \"电力设备\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 12.7\"}",
-        "created_at": "2026-03-26 13:01:44",
-        "closed_trade_date": "2026-03-26",
-        "exit_price": 27.03,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 3,
-        "symbol": "301587",
-        "name": "中瑞股份",
-        "opened_trade_date": "2026-03-26",
-        "entry_price": 27.03,
-        "target_weight_pct": 12.0,
-        "status": "closed",
-        "theme": "电力设备",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"301587\", \"name\": \"中瑞股份\", \"display\": \"中瑞股份 (301587)\", \"theme\": \"电力设备\", \"resonance_level\": \"A\", \"resonance_score\": 79.1, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"follower\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 12.7\"}",
-        "created_at": "2026-03-26 12:21:12",
-        "closed_trade_date": "2026-03-26",
-        "exit_price": 27.03,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 2,
-        "symbol": "000001",
-        "name": "深量科技",
-        "opened_trade_date": "2026-03-25",
-        "entry_price": 18.23,
-        "target_weight_pct": 8.0,
-        "status": "closed",
-        "theme": "算力",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"000001\", \"name\": \"深量科技\", \"display\": \"深量科技 (000001)\", \"theme\": \"算力\", \"resonance_level\": \"A\", \"resonance_score\": 100.0, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 8, \"role\": \"mainline_leader\", \"thesis\": \"情绪阶段 ice / 题材热度排名 2 / 题材热度分 2.52\"}",
-        "created_at": "2026-03-25 13:03:14",
-        "closed_trade_date": "2026-03-25",
-        "exit_price": 18.23,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      },
-      {
-        "id": 1,
-        "symbol": "000004",
-        "name": "盛景智能",
-        "opened_trade_date": "2026-03-25",
-        "entry_price": 22.11,
-        "target_weight_pct": 12.0,
-        "status": "closed",
-        "theme": "机器人",
-        "strategy_json": "[\"hotmoney\", \"leader\"]",
-        "plan_json": "{\"symbol\": \"000004\", \"name\": \"盛景智能\", \"display\": \"盛景智能 (000004)\", \"theme\": \"机器人\", \"resonance_level\": \"A\", \"resonance_score\": 100.0, \"strategies\": [\"hotmoney\", \"leader\"], \"target_weight_pct\": 12, \"role\": \"mainline_leader\", \"thesis\": \"情绪阶段 ice / 题材热度排名 1 / 题材热度分 2.62\"}",
-        "created_at": "2026-03-25 13:03:14",
-        "closed_trade_date": "2026-04-22",
-        "exit_price": 22.11,
-        "realized_return_pct": 0.0,
-        "peak_return_pct": 0.0,
-        "partial_exit_taken": 0,
-        "lifecycle_state": "open"
-      }
-    ],
-    "recent_trades": [
-      {
-        "id": 30,
-        "trade_date": "2026-06-03",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "side": "buy",
-        "price": 22.11,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-06-03 14:50:48"
-      },
-      {
-        "id": 29,
-        "trade_date": "2026-06-03",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "side": "sell",
-        "price": 22.11,
-        "weight_pct": 8.0,
-        "note": "paper_time_exit",
-        "created_at": "2026-06-03 14:50:48"
-      },
-      {
-        "id": 28,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "buy",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-04-22 13:14:28"
-      },
-      {
-        "id": 27,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "sell",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-04-22 13:14:28"
-      },
-      {
-        "id": 26,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "buy",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-04-22 13:10:33"
-      },
-      {
-        "id": 25,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "sell",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-04-22 13:10:33"
-      },
-      {
-        "id": 24,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "buy",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-04-22 13:08:23"
-      },
-      {
-        "id": 23,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "sell",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-04-22 13:08:23"
-      },
-      {
-        "id": 22,
-        "trade_date": "2026-04-22",
-        "symbol": "301278",
-        "name": "快可电子",
-        "side": "buy",
-        "price": 44.0,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-04-22 13:07:32"
-      },
-      {
-        "id": 21,
-        "trade_date": "2026-04-22",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "side": "buy",
-        "price": 22.11,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-04-22 00:31:57"
-      },
-      {
-        "id": 20,
-        "trade_date": "2026-04-22",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "side": "sell",
-        "price": 22.11,
-        "weight_pct": 12.0,
-        "note": "paper_time_exit",
-        "created_at": "2026-04-22 00:31:57"
-      },
-      {
-        "id": 19,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "buy",
-        "price": 45.18,
-        "weight_pct": 12.0,
-        "note": "paper_entry",
-        "created_at": "2026-03-27 15:31:35"
-      },
-      {
-        "id": 18,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "sell",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-03-27 15:31:35"
-      },
-      {
-        "id": 17,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "buy",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-03-27 14:57:31"
-      },
-      {
-        "id": 16,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "sell",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-03-27 14:57:31"
-      },
-      {
-        "id": 15,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "buy",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-03-27 14:45:15"
-      },
-      {
-        "id": 14,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "sell",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-03-27 14:45:15"
-      },
-      {
-        "id": 13,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "buy",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-03-27 14:45:00"
-      },
-      {
-        "id": 12,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "sell",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_riskmode_exit",
-        "created_at": "2026-03-27 14:45:00"
-      },
-      {
-        "id": 11,
-        "trade_date": "2026-03-27",
-        "symbol": "300584",
-        "name": "海辰药业",
-        "side": "buy",
-        "price": 45.18,
-        "weight_pct": 8.0,
-        "note": "paper_entry",
-        "created_at": "2026-03-27 14:40:43"
-      }
-    ]
-  },
-  "strategy_portfolios": {
-    "enabled": true,
-    "summary": {
-      "portfolio_count": 3,
-      "initial_capital_per_portfolio": 1000000.0,
-      "items": [
-        {
-          "id": 1,
-          "portfolio_key": "mainline_leader",
-          "name": "主线龙头组合",
-          "initial_capital": 1000000.0,
-          "cash": 1000000.0,
-          "nav": 1000000.0,
-          "config_json": "{\"key\": \"mainline_leader\", \"name\": \"主线龙头组合\", \"description\": \"只做主线龙头与前排核心，频率低，强调确定性。\", \"styles\": {\"roles\": [\"mainline_leader\", \"frontline_core\"], \"levels\": [\"A\", \"B\"], \"min_strategy_count\": 1, \"max_positions\": 3, \"cash_buffer_pct\": 28}}",
-          "created_at": "2026-03-27 14:21:27",
-          "updated_at": "2026-06-03 14:50:48",
-          "display_name": "主线龙头组合",
-          "description": "只做主线龙头与前排核心，频率低，强调确定性。",
-          "styles": {
-            "roles": [
-              "mainline_leader",
-              "frontline_core"
-            ],
-            "levels": [
-              "A",
-              "B"
-            ],
-            "min_strategy_count": 1,
-            "max_positions": 3,
-            "cash_buffer_pct": 28
-          },
-          "positions": [],
-          "recent_trades": [],
-          "nav_history": [
-            {
-              "id": 31,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-06-03",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-06-03 14:50:48"
-            },
-            {
-              "id": 28,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:14:28"
-            },
-            {
-              "id": 25,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:10:18"
-            },
-            {
-              "id": 22,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:08:57"
-            },
-            {
-              "id": 19,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:35:25"
-            },
-            {
-              "id": 16,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:34:01"
-            },
-            {
-              "id": 13,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 15:21:25"
-            },
-            {
-              "id": 10,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:57:58"
-            },
-            {
-              "id": 7,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:45:40"
-            },
-            {
-              "id": 4,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:41:15"
-            },
-            {
-              "id": 1,
-              "portfolio_key": "mainline_leader",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:21:30"
-            }
-          ],
-          "position_count": 0,
-          "total_return_pct": 0.0
-        },
-        {
-          "id": 2,
-          "portfolio_key": "double_resonance",
-          "name": "双确认高共振组合",
-          "initial_capital": 1000000.0,
-          "cash": 1000000.0,
-          "nav": 1000000.0,
-          "config_json": "{\"key\": \"double_resonance\", \"name\": \"双确认高共振组合\", \"description\": \"至少双策略共识，优先 A/B 级共振，偏胜率优先。\", \"styles\": {\"roles\": [\"mainline_leader\", \"frontline_core\", \"secondary_rotation\"], \"levels\": [\"A\", \"B\"], \"min_strategy_count\": 2, \"max_positions\": 4, \"cash_buffer_pct\": 20}}",
-          "created_at": "2026-03-27 14:21:27",
-          "updated_at": "2026-06-03 14:50:48",
-          "display_name": "双确认高共振组合",
-          "description": "至少双策略共识，优先 A/B 级共振，偏胜率优先。",
-          "styles": {
-            "roles": [
-              "mainline_leader",
-              "frontline_core",
-              "secondary_rotation"
-            ],
-            "levels": [
-              "A",
-              "B"
-            ],
-            "min_strategy_count": 2,
-            "max_positions": 4,
-            "cash_buffer_pct": 20
-          },
-          "positions": [],
-          "recent_trades": [],
-          "nav_history": [
-            {
-              "id": 32,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-06-03",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-06-03 14:50:48"
-            },
-            {
-              "id": 29,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:14:28"
-            },
-            {
-              "id": 26,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:10:18"
-            },
-            {
-              "id": 23,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:08:57"
-            },
-            {
-              "id": 20,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:35:25"
-            },
-            {
-              "id": 17,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:34:01"
-            },
-            {
-              "id": 14,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 15:21:25"
-            },
-            {
-              "id": 11,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:57:58"
-            },
-            {
-              "id": 8,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:45:40"
-            },
-            {
-              "id": 5,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:41:15"
-            },
-            {
-              "id": 2,
-              "portfolio_key": "double_resonance",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:21:30"
-            }
-          ],
-          "position_count": 0,
-          "total_return_pct": 0.0
-        },
-        {
-          "id": 3,
-          "portfolio_key": "defensive_rotation",
-          "name": "防守轮动组合",
-          "initial_capital": 1000000.0,
-          "cash": 1000000.0,
-          "nav": 1000000.0,
-          "config_json": "{\"key\": \"defensive_rotation\", \"name\": \"防守轮动组合\", \"description\": \"偏防守，控制回撤，只做高质量轮动与低风险暴露。\", \"styles\": {\"roles\": [\"frontline_core\", \"secondary_rotation\", \"follower\"], \"levels\": [\"A\", \"B\", \"C\"], \"min_strategy_count\": 1, \"max_positions\": 5, \"cash_buffer_pct\": 35}}",
-          "created_at": "2026-03-27 14:21:27",
-          "updated_at": "2026-06-03 14:50:48",
-          "display_name": "防守轮动组合",
-          "description": "偏防守，控制回撤，只做高质量轮动与低风险暴露。",
-          "styles": {
-            "roles": [
-              "frontline_core",
-              "secondary_rotation",
-              "follower"
-            ],
-            "levels": [
-              "A",
-              "B",
-              "C"
-            ],
-            "min_strategy_count": 1,
-            "max_positions": 5,
-            "cash_buffer_pct": 35
-          },
-          "positions": [],
-          "recent_trades": [],
-          "nav_history": [
-            {
-              "id": 33,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-06-03",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-06-03 14:50:48"
-            },
-            {
-              "id": 30,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:14:28"
-            },
-            {
-              "id": 27,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:10:18"
-            },
-            {
-              "id": 24,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 13:08:57"
-            },
-            {
-              "id": 21,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:35:25"
-            },
-            {
-              "id": 18,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-04-22",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-04-22 00:34:01"
-            },
-            {
-              "id": 15,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 15:21:25"
-            },
-            {
-              "id": 12,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:57:58"
-            },
-            {
-              "id": 9,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:45:40"
-            },
-            {
-              "id": 6,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:41:15"
-            },
-            {
-              "id": 3,
-              "portfolio_key": "defensive_rotation",
-              "trade_date": "2026-03-27",
-              "nav": 1000000.0,
-              "cash": 1000000.0,
-              "market_value": 0.0,
-              "note": "auto_rebalance",
-              "created_at": "2026-03-27 14:21:30"
-            }
-          ],
-          "position_count": 0,
-          "total_return_pct": 0.0
-        }
-      ]
-    }
-  },
-  "risk_gate": {
-    "market_stage": "ice",
-    "risk_mode": "defensive_probe",
-    "execution_policy": "paper_only",
-    "no_trade": false,
-    "risk_budget_pct": 20.0,
-    "remaining_risk_budget_pct": 12.0,
-    "risk_profile": {
-      "risk_mode": "defensive_probe",
-      "market_stage": "ice",
-      "limits": {
-        "single_position_cap_pct": 8.0,
-        "single_theme_cap_pct": 12.0,
-        "single_strategy_cap_pct": 14.0,
-        "daily_new_exposure_cap_pct": 20.0
-      },
-      "risk_discount": 1.0,
-      "cooldown": false,
-      "recent_negative_streak": 0,
-      "historical_stage_avg_return_1d": null,
-      "historical_stage_win_rate_1d_pct": null,
-      "strategy_governor": {
-        "history_signal_count": 200,
-        "trade_count": 0,
-        "enabled_strategies": [],
-        "frozen_strategies": [],
-        "items": [],
-        "notes": []
-      },
-      "candidate_diagnostics": [
-        {
-          "symbol": "000004",
-          "theme": "机器人",
-          "avg_strategy_edge_1d": null,
-          "symbol_avg_return_1d": null,
-          "symbol_win_rate_1d_pct": null,
-          "strategy_weight_multiplier": 1.0,
-          "blocked_by_governor": false,
-          "quality_multiplier": 1.18
-        }
-      ],
-      "notes": []
-    },
-    "notes": [
-      "情绪冰点，以轻仓试错为主。",
-      "优先保留高共振候选，不做弱共振扩散交易。",
-      "近期表现失效，冻结策略：leader",
-      "当前实验层推荐参数集：baseline",
-      "avg_score=None, win_rate=None%",
-      "剩余未使用风险预算 12.0% 。"
-    ]
-  },
+  "validation_count": 0,
   "report": {
     "trade_date": "2026-06-03",
     "market": {
       "trade_date": "2026-06-03",
       "market_sentiment_stage": "ice",
-      "limit_up_count": 3,
-      "limit_down_count": 1,
-      "broken_board_rate": 0.25,
-      "highest_board": 5,
+      "limit_up_count": 0,
+      "limit_down_count": 0,
+      "broken_board_rate": 0.0,
+      "highest_board": 2,
       "notes": [
-        "涨停家数 3 / Limit-up count 3",
-        "跌停家数 1 / Limit-down count 1",
-        "最高连板 5 / Highest board 5",
-        "炸板率 25.0% / Broken-board rate 25.0%"
+        "涨停家数 0 / Limit-up count 0",
+        "跌停家数 0 / Limit-down count 0",
+        "最高连板 2 / Highest board 2",
+        "炸板率 0.0% / Broken-board rate 0.0%"
       ]
     },
     "top_signals": [
       {
         "strategy": "leader",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "score": 100.0,
-        "risk_level": "high",
-        "reasons": [
-          "连板高度 5",
-          "竞价强度 0.95",
-          "封单强度 0.91",
-          "题材归属 机器人"
-        ],
-        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
-        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
-        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
-        "theme": "机器人",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 1",
-          "题材热度分 2.62",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 95.0 百万"
-        ]
-      },
-      {
-        "strategy": "leader",
-        "symbol": "000001",
-        "name": "深量科技",
-        "score": 100.0,
-        "risk_level": "high",
-        "reasons": [
-          "连板高度 4",
-          "竞价强度 0.91",
-          "封单强度 0.88",
-          "题材归属 算力"
-        ],
-        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
-        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
-        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
-        "theme": "算力",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 2",
-          "题材热度分 2.52",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 82.0 百万"
-        ]
-      },
-      {
-        "strategy": "leader",
-        "symbol": "000002",
-        "name": "华腾低空",
-        "score": 100.0,
-        "risk_level": "medium",
-        "reasons": [
-          "连板高度 3",
-          "竞价强度 0.82",
-          "封单强度 0.79",
-          "题材归属 低空经济"
-        ],
-        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
-        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
-        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
-        "theme": "低空经济",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 3",
-          "题材热度分 2.44",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 56.0 百万"
-        ]
-      },
-      {
-        "strategy": "hotmoney",
-        "symbol": "000004",
-        "name": "盛景智能",
-        "score": 100.0,
-        "risk_level": "high",
-        "reasons": [
-          "游资净买额 95.0 百万",
-          "量比 3.1",
-          "叙事强度 0.9",
-          "题材归属 机器人"
-        ],
-        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
-        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
-        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
-        "theme": "机器人",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 1",
-          "题材热度分 2.62",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 95.0 百万"
-        ]
-      },
-      {
-        "strategy": "hotmoney",
-        "symbol": "000001",
-        "name": "深量科技",
-        "score": 100.0,
-        "risk_level": "high",
-        "reasons": [
-          "游资净买额 82.0 百万",
-          "量比 2.6",
-          "叙事强度 0.93",
-          "题材归属 算力"
-        ],
-        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
-        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
-        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
-        "theme": "算力",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 2",
-          "题材热度分 2.52",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 82.0 百万"
-        ]
-      },
-      {
-        "strategy": "hotmoney",
-        "symbol": "000002",
-        "name": "华腾低空",
-        "score": 94.7,
-        "risk_level": "medium",
-        "reasons": [
-          "游资净买额 56.0 百万",
-          "量比 2.2",
-          "叙事强度 0.89",
-          "题材归属 低空经济"
-        ],
-        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
-        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
-        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
-        "theme": "低空经济",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 100.0,
-        "resonance_level": "A",
-        "resonance_role": "mainline_leader",
-        "resonance_reasons": [
-          "情绪阶段 ice",
-          "题材热度排名 3",
-          "题材热度分 2.44",
-          "共振角色 mainline_leader",
-          "属于当前主线题材",
-          "游资净买额 56.0 百万"
-        ]
-      },
-      {
-        "strategy": "leader",
-        "symbol": "000003",
-        "name": "国新改革",
-        "score": 96.8,
+        "symbol": "002747",
+        "name": "埃斯顿",
+        "score": 78.2,
         "risk_level": "medium",
         "reasons": [
           "连板高度 2",
           "竞价强度 0.69",
-          "封单强度 0.42",
-          "题材归属 国企改革"
+          "封单强度 0.47",
+          "题材归属 机器人"
         ],
         "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
         "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
         "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
-        "theme": "国企改革",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 79.0,
+        "theme": "机器人",
+        "secondary_theme": "工业自动化",
+        "concepts": [
+          "机器人",
+          "工业自动化",
+          "智能制造"
+        ],
+        "resonance_score": 100.0,
         "resonance_level": "A",
-        "resonance_role": "follower",
+        "resonance_role": "mainline_leader",
         "resonance_reasons": [
           "情绪阶段 ice",
-          "题材热度排名 4",
-          "题材热度分 2.1",
-          "共振角色 follower",
-          "游资净买额 43.0 百万"
+          "题材热度排名 1",
+          "题材热度分 3.79",
+          "共振角色 mainline_leader",
+          "属于当前主线题材",
+          "游资净买额 51.0 百万"
         ]
       },
       {
         "strategy": "hotmoney",
-        "symbol": "000003",
-        "name": "国新改革",
-        "score": 77.2,
-        "risk_level": "medium",
+        "symbol": "300308",
+        "name": "中际旭创",
+        "score": 100.0,
+        "risk_level": "high",
         "reasons": [
-          "游资净买额 43.0 百万",
-          "量比 1.9",
-          "叙事强度 0.78",
-          "题材归属 国企改革"
+          "游资净买额 74.0 百万",
+          "量比 2.08",
+          "叙事强度 0.88",
+          "题材归属 光模块"
         ],
         "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
         "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
         "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
-        "theme": "国企改革",
-        "secondary_theme": "",
-        "concepts": [],
-        "resonance_score": 79.0,
+        "theme": "光模块",
+        "secondary_theme": "AI基础设施",
+        "concepts": [
+          "光模块",
+          "AI基础设施",
+          "数据中心"
+        ],
+        "resonance_score": 89.5,
+        "resonance_level": "A",
+        "resonance_role": "frontline_core",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 2",
+          "题材热度分 3.44",
+          "共振角色 frontline_core",
+          "属于当前主线题材",
+          "游资净买额 74.0 百万"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300308",
+        "name": "中际旭创",
+        "score": 60.6,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 1",
+          "竞价强度 0.7",
+          "封单强度 0.5",
+          "题材归属 光模块"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "光模块",
+        "secondary_theme": "AI基础设施",
+        "concepts": [
+          "光模块",
+          "AI基础设施",
+          "数据中心"
+        ],
+        "resonance_score": 89.5,
+        "resonance_level": "A",
+        "resonance_role": "frontline_core",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 2",
+          "题材热度分 3.44",
+          "共振角色 frontline_core",
+          "属于当前主线题材",
+          "游资净买额 74.0 百万"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "300502",
+        "name": "新易盛",
+        "score": 100.0,
+        "risk_level": "high",
+        "reasons": [
+          "游资净买额 96.0 百万",
+          "量比 2.72",
+          "叙事强度 0.92",
+          "题材归属 CPO"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "CPO",
+        "secondary_theme": "光模块",
+        "concepts": [
+          "CPO",
+          "光模块",
+          "高速互连"
+        ],
+        "resonance_score": 89.2,
         "resonance_level": "A",
         "resonance_role": "follower",
         "resonance_reasons": [
           "情绪阶段 ice",
           "题材热度排名 4",
-          "题材热度分 2.1",
+          "题材热度分 2.38",
           "共振角色 follower",
-          "游资净买额 43.0 百万"
+          "游资净买额 96.0 百万"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "300502",
+        "name": "新易盛",
+        "score": 88.5,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 2",
+          "竞价强度 0.81",
+          "封单强度 0.58",
+          "题材归属 CPO"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "CPO",
+        "secondary_theme": "光模块",
+        "concepts": [
+          "CPO",
+          "光模块",
+          "高速互连"
+        ],
+        "resonance_score": 89.2,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 4",
+          "题材热度分 2.38",
+          "共振角色 follower",
+          "游资净买额 96.0 百万"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "603019",
+        "name": "中科曙光",
+        "score": 100.0,
+        "risk_level": "high",
+        "reasons": [
+          "游资净买额 88.0 百万",
+          "量比 2.38",
+          "叙事强度 0.9",
+          "题材归属 算力"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "算力",
+        "secondary_theme": "国产服务器",
+        "concepts": [
+          "算力",
+          "国产服务器",
+          "人工智能"
+        ],
+        "resonance_score": 83.5,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 2.22",
+          "共振角色 follower",
+          "游资净买额 88.0 百万"
+        ]
+      },
+      {
+        "strategy": "leader",
+        "symbol": "603019",
+        "name": "中科曙光",
+        "score": 83.3,
+        "risk_level": "medium",
+        "reasons": [
+          "连板高度 2",
+          "竞价强度 0.78",
+          "封单强度 0.55",
+          "题材归属 算力"
+        ],
+        "entry_note": "关注分歧后的承接与回封，不追情绪极致一致。",
+        "exit_note": "次日弱转强失败、放量走弱或核心题材退潮时考虑退出。",
+        "invalidation_note": "若高开低走且失去板块带动性，则该信号失效。",
+        "theme": "算力",
+        "secondary_theme": "国产服务器",
+        "concepts": [
+          "算力",
+          "国产服务器",
+          "人工智能"
+        ],
+        "resonance_score": 83.5,
+        "resonance_level": "A",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 5",
+          "题材热度分 2.22",
+          "共振角色 follower",
+          "游资净买额 88.0 百万"
+        ]
+      },
+      {
+        "strategy": "hotmoney",
+        "symbol": "688041",
+        "name": "海光信息",
+        "score": 93.0,
+        "risk_level": "medium",
+        "reasons": [
+          "游资净买额 58.0 百万",
+          "量比 1.95",
+          "叙事强度 0.85",
+          "题材归属 国产算力"
+        ],
+        "entry_note": "优先关注与主线题材共振、且次日有承接预期的标的。",
+        "exit_note": "若游资次日无溢价或板块分歧扩大，降低仓位或止盈。",
+        "invalidation_note": "若席位行为与题材热度脱钩，则跟踪逻辑弱化。",
+        "theme": "国产算力",
+        "secondary_theme": "CPU",
+        "concepts": [
+          "国产算力",
+          "CPU",
+          "信创"
+        ],
+        "resonance_score": 65.4,
+        "resonance_level": "B",
+        "resonance_role": "follower",
+        "resonance_reasons": [
+          "情绪阶段 ice",
+          "题材热度排名 6",
+          "题材热度分 1.93",
+          "共振角色 follower",
+          "游资净买额 58.0 百万"
         ]
       }
     ],
-    "summary_cn": "2026-06-03 市场处于冰点阶段，涨停 3 家，跌停 1 家，最高连板 5。当前优先关注强共振候选：盛景智能(000004)、深量科技(000001)、华腾低空(000002)。其中优先看主线题材内的主线龙头/前排核心，弱共振或噪声信号如 暂无明显回避标的 更适合观察而非追击。整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。",
-    "summary_en": "On 2026-06-03, the market is in ice stage. There are 3 limit-up stocks, 1 limit-down stocks, and the highest board is 5. Priority goes to high-resonance names: 盛景智能(000004)、深量科技(000001)、华腾低空(000002). Prefer mainline leaders/frontline core setups, while weaker names such as 暂无明显回避标的 are better treated as watch-only. Use this as a research and next-day validation framework, not a fully automated execution trigger.",
+    "summary_cn": "2026-06-03 市场处于冰点阶段，涨停 0 家，跌停 0 家，最高连板 2。当前优先关注强共振候选：埃斯顿(002747)、中际旭创(300308)、新易盛(300502)。其中优先看主线题材内的主线龙头/前排核心，弱共振或噪声信号如 暂无明显回避标的 更适合观察而非追击。整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。",
+    "summary_en": "2026-06-03 市场处于冰点阶段，涨停 0 家，跌停 0 家，最高连板 2。当前优先关注强共振候选：埃斯顿(002747)、中际旭创(300308)、新易盛(300502)。其中优先看主线题材内的主线龙头/前排核心，弱共振或噪声信号如 暂无明显回避标的 更适合观察而非追击。整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。",
     "mainline_themes": [
       "机器人",
-      "算力",
-      "低空经济"
+      "光模块",
+      "CPO"
     ],
     "focus_candidates": [
-      "盛景智能(000004)",
-      "深量科技(000001)",
-      "华腾低空(000002)"
+      "埃斯顿(002747)",
+      "中际旭创(300308)",
+      "新易盛(300502)"
     ],
     "observe_candidates": [],
     "avoid_candidates": [],
     "tomorrow_plan": [
-      "优先盯住主线题材：机器人、算力。",
-      "重点跟踪强共振候选的竞价、承接和回封质量：盛景智能(000004)、深量科技(000001)。",
+      "优先盯住主线题材：机器人、光模块。",
+      "重点跟踪强共振候选的竞价、承接和回封质量：埃斯顿(002747)、中际旭创(300308)。",
       "情绪仍偏冰点，适合轻仓试错，不宜把弱共振信号当成进攻主仓。"
     ]
   }

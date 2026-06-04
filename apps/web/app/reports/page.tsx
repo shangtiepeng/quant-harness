@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Alert, Card, Col, Empty, List, Row, Skeleton, Space, Tag, Typography } from 'antd'
-import { apiUrl } from '../config'
+import { apiConnectionError, fetchApi } from '../config'
 import { AppShell, PageIntro } from '../components/AppShell'
 
 const { Paragraph, Text, Title } = Typography
@@ -27,9 +27,7 @@ export default function ReportsPage() {
 
   async function fetchJson<T>(path: string, fallback: T): Promise<T> {
     try {
-      const res = await fetch(apiUrl(path))
-      if (!res.ok) return fallback
-      return (await res.json()) as T
+      return await fetchApi<T>(path)
     } catch {
       return fallback
     }
@@ -53,7 +51,7 @@ export default function ReportsPage() {
           if (!ignore) setDetail(detailData)
         }
       } catch (err) {
-        if (!ignore) setError(err instanceof Error ? err.message : '加载失败')
+        if (!ignore) setError(err instanceof Error ? err.message : apiConnectionError().message)
       } finally {
         if (!ignore) {
           setLoading(false)
@@ -85,8 +83,8 @@ export default function ReportsPage() {
     <AppShell>
       <Space orientation="vertical" size={16} style={{ width: '100%' }}>
         <PageIntro
-          eyebrow="Reports"
-          title="Research Reports"
+          eyebrow="研究报告"
+          title="历史研究报告"
           description="查看历史日报归档，快速切换日期并预览 Markdown 报告内容。"
         />
 
@@ -125,8 +123,8 @@ export default function ReportsPage() {
             <Card className="full-height-card">
               <Space orientation="vertical" size={12} style={{ width: '100%' }}>
                 <div>
-                  <Text type="secondary">Preview</Text>
-                  <Title level={3} style={{ margin: 0 }}>{selectedDate || 'N/A'}</Title>
+                  <Text type="secondary">报告预览</Text>
+                  <Title level={3} style={{ margin: 0 }}>{selectedDate || '暂无报告'}</Title>
                 </div>
                 {detailLoading ? (
                   <Skeleton active paragraph={{ rows: 14 }} />

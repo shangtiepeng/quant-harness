@@ -80,14 +80,7 @@ def build_daily_report(
         "整体仍以盘后研究、次日验证和轻量试错为主，不建议直接当作全自动执行信号。"
     )
 
-    summary_en = (
-        f"On {trade_date}, the market is in {market.market_sentiment_stage} stage. "
-        f"There are {market.limit_up_count} limit-up stocks, {market.limit_down_count} limit-down stocks, "
-        f"and the highest board is {market.highest_board}. "
-        f"Priority goes to high-resonance names: {focus_cn}. "
-        f"Prefer mainline leaders/frontline core setups, while weaker names such as {avoid_cn} are better treated as watch-only. "
-        "Use this as a research and next-day validation framework, not a fully automated execution trigger."
-    )
+    summary_en = summary_cn
 
     return DailyReport(
         trade_date=trade_date,

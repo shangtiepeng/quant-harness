@@ -31,7 +31,7 @@ from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
 
-app = FastAPI(title="Quant Harness API", version="0.6.0")
+app = FastAPI(title="极投雷达 API", version="0.6.0")
 
 app.add_middleware(
     CORSMiddleware,

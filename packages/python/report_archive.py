@@ -51,18 +51,15 @@ def read_archived_report(trade_date: str) -> dict[str, str]:
 def _to_markdown(result: dict[str, Any]) -> str:
     report = result["report"]
     lines = [
-        f"# Quant Harness Daily Report - {result['trade_date']}",
+        f"# 极投雷达盘后研究报告 - {result['trade_date']}",
         "",
-        f"- Source: {result['source']}",
-        f"- Run ID: {result['run_id']}",
-        f"- Signal Count: {result['signal_count']}",
-        f"- Validation Count: {result['validation_count']}",
+        f"- 数据源: {result['source']}",
+        f"- 运行 ID: {result['run_id']}",
+        f"- 信号数: {result['signal_count']}",
+        f"- 验证数: {result['validation_count']}",
         "",
         "## 中文摘要",
         report["summary_cn"],
-        "",
-        "## English Summary",
-        report["summary_en"],
         "",
         "## 结构化日报",
         f"- 主线题材: {'、'.join(report.get('mainline_themes', [])) or '暂无'}",
@@ -78,21 +75,21 @@ def _to_markdown(result: dict[str, Any]) -> str:
 
     lines.extend([
         "",
-        "## Top Signals",
+        "## 核心信号",
     ])
 
     for signal in report.get("top_signals", []):
         lines.extend(
             [
                 f"### {signal['name']} ({signal['symbol']})",
-                f"- Strategy: {signal['strategy']}",
-                f"- Score: {signal['score']}",
-                f"- Risk: {signal['risk_level']}",
-                f"- Theme: {signal['theme']}",
-                f"- Reasons: {'; '.join(signal['reasons'])}",
-                f"- Entry: {signal['entry_note']}",
-                f"- Exit: {signal['exit_note']}",
-                f"- Invalidation: {signal['invalidation_note']}",
+                f"- 策略: {signal['strategy']}",
+                f"- 分数: {signal['score']}",
+                f"- 风险: {signal['risk_level']}",
+                f"- 题材: {signal['theme']}",
+                f"- 理由: {'；'.join(signal['reasons'])}",
+                f"- 入场: {signal['entry_note']}",
+                f"- 退出: {signal['exit_note']}",
+                f"- 失效: {signal['invalidation_note']}",
                 "",
             ]
         )

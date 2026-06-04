@@ -1,154 +1,93 @@
-# Quant Harness
+# 极投雷达
 
-A-share tactical research and closed-loop execution MVP.
+AI 赛道与短线共振研究台。
 
-## What this is
+这个项目用于 A 股题材、赛道和短线共振的盘后研究，核心目标是把行情输入、策略信号、组合建议、验证回放和日报归档串成一个可复盘的闭环。它不是全自动实盘交易机器人，页面中的信号只用于研究、观察和模拟验证。
 
-This project is a **research-first quantitative harness** for:
+## 功能
 
-- market sentiment analysis
-- leader-stock candidate selection
-- hot-money / 龙虎榜 tracking
-- daily closed-loop report generation
-- paper-trading ready signal pipeline
+- 市场情绪和题材热度分析
+- 龙头/游资/共振候选筛选
+- 推理赛道增长模型和当前热门赛道页签
+- 组合建议与模拟持仓跟踪
+- 盘后任务一键执行
+- 历史日报归档和策略验证看板
 
-It is intentionally **not** a fully automated live trading bot in v1.
+## 技术栈
 
-## MVP goals
+- 后端：Python、FastAPI、Pydantic、pandas、httpx、AkShare
+- 前端：Next.js、React、TypeScript、Ant Design、Recharts
+- 部署：Vercel 前端 + Vercel/Render 后端
 
-- Pull market/sample data
-- Compute strategy features
-- Generate candidate signals
-- Summarize results into a daily report
-- Expose APIs for a frontend dashboard
-- Support future backtesting / paper trading / broker adapters
+## 本地启动
 
-## Tech stack
-
-### Backend
-- Python 3.9+
-- FastAPI
-- Pydantic
-- pandas
-- httpx
-
-### Frontend
-- Next.js
-- React
-- TypeScript
-
-## Project structure
-
-```bash
-quant-harness/
-  apps/
-    api/        # FastAPI backend
-    web/        # Next.js dashboard
-  packages/
-    python/
-      core/
-      data/
-      strategies/
-      reports/
-      execution/
-  data/
-    sample/
-  scripts/
-```
-
-## Quick start
-
-### Daily automation
-
-Run one complete daily job manually:
+后端：
 
 ```bash
 cd /Users/hero/Documents/quant-harness
-python3 scripts/run_daily_job.py
+source apps/api/.venv/bin/activate
+uvicorn apps.api.main:app --host 127.0.0.1 --port 8010
 ```
 
-This will:
-- run the pipeline
-- persist the run
-- validate saved signals
-- archive the report to JSON and Markdown
-- print a daily summary JSON
-
-Archived reports are written to:
-- `reports/daily/YYYY-MM-DD.json`
-- `reports/daily/YYYY-MM-DD.md`
-
-Install a weekday cron job (16:05, Mon-Fri):
+前端：
 
 ```bash
-cd /Users/hero/Documents/quant-harness
-./scripts/setup_cron.sh
-```
-
-## Quick start
-
-### 1. Backend
-
-```bash
-cd apps/api
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8010
-```
-
-### 2. Frontend
-
-```bash
-cd apps/web
+cd /Users/hero/Documents/quant-harness/apps/web
 npm install
 npm run dev
 ```
 
-Then open:
-- API: http://localhost:8010
-- Web: http://localhost:3010
+打开：
 
-## API endpoints
+- 前端：http://localhost:3010
+- 后端健康检查：http://127.0.0.1:8010/health
 
-- `GET /health`
-- `GET /api/meta`
-- `GET /api/market/overview`
-- `GET /api/signals`
-- `GET /api/report/daily`
-- `POST /api/pipeline/run`  # persist one run into sqlite
-- `POST /api/jobs/daily-run`  # run pipeline + validation as one job
-- `GET /api/history/runs`
-- `GET /api/history/runs/{run_id}/signals`
-- `POST /api/history/runs/{run_id}/validate`
-- `GET /api/history/validations`
-- `GET /api/history/reports`
-- `GET /api/history/reports/{trade_date}`
-- `GET /api/analytics/strategy-performance`
+## 线上部署
 
-## Notes
+前端项目环境变量：
 
-Current version prefers **real market input when available**:
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://api.herojiatou.com
+```
+
+如果没有配置这个变量，前端在 `herojiatou.com` 上会默认请求 `https://api.herojiatou.com`；本地开发仍默认请求 `http://127.0.0.1:8010`。
+
+后端健康检查：
+
+```bash
+curl https://api.herojiatou.com/health
+```
+
+## 盘后任务
+
+手动执行完整盘后任务：
+
+```bash
+cd /Users/hero/Documents/quant-harness
+source apps/api/.venv/bin/activate
+python scripts/run_daily_job.py
+```
+
+任务会执行：
+
+- 拉取行情数据
+- 生成策略信号
+- 生成组合建议
+- 保存运行记录
+- 验证历史信号
+- 归档 JSON 和 Markdown 日报
+
+日报路径：
+
+- `reports/daily/YYYY-MM-DD.json`
+- `reports/daily/YYYY-MM-DD.md`
+
+## 数据源说明
+
+系统优先使用真实行情输入：
+
 1. AkShare
-2. Eastmoney public endpoint fallback
-3. bundled sample data fallback
+2. 东方财富公开接口
+3. 内置真实 A 股样本兜底
 
-So the system remains runnable even if one source fails.
-
-## Recommended route
-
-The current implementation follows the most stable route:
-- clean local repo hygiene
-- connect real market data conservatively
-- keep sample fallback for reliability
-- generate a post-market daily loop first
-- expand later into storage / backtest / paper trading
-
-## Next expansion ideas
-
-- Real data collectors
-- DuckDB/Postgres storage
-- Backtesting engine
-- Paper trading
-- Risk engine
-- LLM-generated daily narrative
+兜底样本只用于保证服务可运行，不代表推荐买入。后端会过滤无效 A 股代码，避免生成不可搜索的假股票。

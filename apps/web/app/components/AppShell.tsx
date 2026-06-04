@@ -5,16 +5,17 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { BarChartOutlined, DashboardOutlined, FileTextOutlined, PlayCircleOutlined, RadarChartOutlined } from '@ant-design/icons'
 import { Card, Layout, Space, Statistic, Typography } from 'antd'
+import { SITE_NAME } from '../branding'
 
 const { Header, Content } = Layout
 const { Text, Title } = Typography
 
 const navItems = [
-  { href: '/', label: 'Dashboard', icon: <DashboardOutlined /> },
-  { href: '/sector-growth', label: 'Sector Growth', icon: <RadarChartOutlined /> },
-  { href: '/run-job', label: 'Run Job', icon: <PlayCircleOutlined /> },
-  { href: '/reports', label: 'Reports', icon: <FileTextOutlined /> },
-  { href: '/charts', label: 'Charts', icon: <BarChartOutlined /> },
+  { href: '/', label: '首页', icon: <DashboardOutlined /> },
+  { href: '/sector-growth', label: '赛道雷达', icon: <RadarChartOutlined /> },
+  { href: '/run-job', label: '任务执行', icon: <PlayCircleOutlined /> },
+  { href: '/reports', label: '研究报告', icon: <FileTextOutlined /> },
+  { href: '/charts', label: '数据看板', icon: <BarChartOutlined /> },
 ]
 
 function isActivePath(pathname: string, href: string): boolean {
@@ -28,9 +29,9 @@ export function AppShell({ children }: { children: ReactNode }) {
     <Layout className="app-shell">
       <Header className="app-header">
         <Link href="/" className="app-brand">
-          Quant Harness
+          {SITE_NAME}
         </Link>
-        <nav className="app-nav" aria-label="Primary">
+        <nav className="app-nav" aria-label="主导航">
           {navItems.map((item) => (
             <Link
               href={item.href}

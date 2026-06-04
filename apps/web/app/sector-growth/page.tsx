@@ -17,7 +17,7 @@ import {
   Typography,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { apiUrl } from '../config'
+import { apiConnectionError, apiUrl } from '../config'
 import { AppShell, PageIntro } from '../components/AppShell'
 
 const { Title, Paragraph, Text } = Typography
@@ -196,7 +196,7 @@ export default function SectorGrowthPage() {
         setSelectedTrackIds((current) => ({ ...current, [activeMode]: current[activeMode] || json.items[0]?.track_id || '' }))
       } catch (err) {
         if (ignore) return
-        setError(err instanceof Error ? err.message : '加载失败')
+        setError(err instanceof Error ? err.message : apiConnectionError().message)
       } finally {
         if (!ignore) {
           setLoading(false)
@@ -348,7 +348,7 @@ export default function SectorGrowthPage() {
     <AppShell>
       <Space orientation="vertical" size={16} style={{ width: '100%' }}>
         <PageIntro
-          eyebrow="Sector Growth"
+          eyebrow="赛道雷达"
           title={copy.title}
           description={copy.description}
         />
@@ -368,12 +368,12 @@ export default function SectorGrowthPage() {
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title="模型版本" value={payload?.model_version || 'N/A'} />
+              <Statistic title="模型版本" value={payload?.model_version || '暂无'} />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title="研究日期" value={payload?.trade_date || 'N/A'} />
+              <Statistic title="研究日期" value={payload?.trade_date || '暂无'} />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
@@ -383,7 +383,7 @@ export default function SectorGrowthPage() {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title="市场热度源" value={payload?.source_meta.market_source || 'N/A'} />
+              <Statistic title="市场热度源" value={payload?.source_meta.market_source || '暂无'} />
             </Card>
           </Col>
         </Row>

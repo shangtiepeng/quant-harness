@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Alert, Button, Card, Col, Descriptions, Progress, Row, Space, Spin, Typography } from 'antd'
 import { PlayCircleOutlined } from '@ant-design/icons'
-import { apiUrl } from '../config'
+import { apiConnectionError, fetchApi } from '../config'
 import { AppShell, MetricCard, PageIntro } from '../components/AppShell'
 
 const { Paragraph, Text } = Typography
@@ -42,33 +42,23 @@ export default function RunJobPage() {
     setResult(null)
     setStatusText('正在执行盘后任务，这可能需要 10 到 60 秒。')
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 90_000)
-
     try {
-      const res = await fetch(apiUrl('/api/jobs/daily-run'), {
+      const json = await fetchApi<DailyRunResult>('/api/jobs/daily-run', undefined, {
         method: 'POST',
-        signal: controller.signal,
+        timeoutMs: 90_000,
       })
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`)
-      }
-
-      const json = (await res.json()) as DailyRunResult
       setResult(json)
       setStatusText('执行完成。')
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
-        setError('执行超时：任务仍可能在后台运行，请稍后查看 Reports 页面或重试。')
+        setError('执行超时：任务仍可能在后台运行，请稍后查看“研究报告”页面或重试。')
       } else if (err instanceof Error) {
-        setError(`执行失败：${err.message}`)
+        setError(err.message === 'Failed to fetch' ? apiConnectionError('执行失败').message : `执行失败：${err.message}`)
       } else {
-        setError('执行失败，请确认 API 已启动。')
+        setError(apiConnectionError('执行失败').message)
       }
       setStatusText('')
     } finally {
-      clearTimeout(timeoutId)
       setLoading(false)
     }
   }
@@ -77,8 +67,8 @@ export default function RunJobPage() {
     <AppShell>
       <Space orientation="vertical" size={16} style={{ width: '100%' }}>
         <PageIntro
-          eyebrow="Run Job"
-          title="Run Daily Job"
+          eyebrow="任务执行"
+          title="执行盘后研究任务"
           description="手动执行一次完整盘后任务：采集、归档、验证、模拟执行和生成日报。"
           actions={(
             <Button
@@ -88,7 +78,7 @@ export default function RunJobPage() {
               loading={loading}
               disabled={loading}
             >
-              {loading ? 'Running' : 'Run Daily Job'}
+              {loading ? '执行中' : '开始执行'}
             </Button>
           )}
         >
@@ -111,29 +101,29 @@ export default function RunJobPage() {
           <Space orientation="vertical" size={16} style={{ width: '100%' }}>
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12} xl={6}>
-                <MetricCard title="Trade Date" value={result.trade_date || 'N/A'} />
+                <MetricCard title="交易日" value={result.trade_date || '暂无'} />
               </Col>
               <Col xs={24} sm={12} xl={6}>
-                <MetricCard title="Signals" value={result.signal_count || 0} />
+                <MetricCard title="信号数" value={result.signal_count || 0} />
               </Col>
               <Col xs={24} sm={12} xl={6}>
-                <MetricCard title="Validations" value={result.validation_count || 0} />
+                <MetricCard title="验证数" value={result.validation_count || 0} />
               </Col>
               <Col xs={24} sm={12} xl={6}>
-                <MetricCard title="Risk Mode" value={result.paper_execution?.risk_mode || 'N/A'} />
+                <MetricCard title="风险模式" value={result.paper_execution?.risk_mode || '暂无'} />
               </Col>
             </Row>
 
-            <Card title="Execution Result">
+            <Card title="执行结果">
               <Descriptions bordered column={{ xs: 1, md: 2 }}>
-                <Descriptions.Item label="Run ID">{result.run_id}</Descriptions.Item>
-                <Descriptions.Item label="Source">{result.source}</Descriptions.Item>
-                <Descriptions.Item label="Paper Opened">{result.paper_execution?.opened_count ?? 0}</Descriptions.Item>
-                <Descriptions.Item label="Paper Closed">{result.paper_execution?.closed_count ?? 0}</Descriptions.Item>
-                <Descriptions.Item label="Paper Rebalanced">{result.paper_execution?.rebalanced_count ?? 0}</Descriptions.Item>
-                <Descriptions.Item label="Execution Policy">{result.paper_execution?.execution_policy ?? 'N/A'}</Descriptions.Item>
-                <Descriptions.Item label="JSON Archive">{result.archive?.json_path}</Descriptions.Item>
-                <Descriptions.Item label="Markdown Archive">{result.archive?.md_path}</Descriptions.Item>
+                <Descriptions.Item label="运行 ID">{result.run_id}</Descriptions.Item>
+                <Descriptions.Item label="数据源">{result.source}</Descriptions.Item>
+                <Descriptions.Item label="模拟开仓">{result.paper_execution?.opened_count ?? 0}</Descriptions.Item>
+                <Descriptions.Item label="模拟平仓">{result.paper_execution?.closed_count ?? 0}</Descriptions.Item>
+                <Descriptions.Item label="模拟调仓">{result.paper_execution?.rebalanced_count ?? 0}</Descriptions.Item>
+                <Descriptions.Item label="执行策略">{result.paper_execution?.execution_policy ?? '暂无'}</Descriptions.Item>
+                <Descriptions.Item label="JSON 归档">{result.archive?.json_path}</Descriptions.Item>
+                <Descriptions.Item label="Markdown 归档">{result.archive?.md_path}</Descriptions.Item>
               </Descriptions>
               {result.report?.summary_cn ? (
                 <Alert style={{ marginTop: 16 }} type="info" title={result.report.summary_cn} showIcon />
