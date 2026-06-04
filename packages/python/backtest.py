@@ -4,6 +4,7 @@ from collections import defaultdict
 from statistics import mean
 from typing import Any
 
+from packages.python.analysis_cache import get_or_compute
 from packages.python.data.history_collectors import fetch_eastmoney_kline
 from packages.python.storage import list_all_signal_details
 

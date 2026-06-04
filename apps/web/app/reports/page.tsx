@@ -1,85 +1,145 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { Card, Layout, List, Space, Typography } from 'antd'
+import { Alert, Card, Col, Empty, List, Row, Skeleton, Space, Tag, Typography } from 'antd'
+import { apiUrl } from '../config'
+import { AppShell, PageIntro } from '../components/AppShell'
 
-const { Header, Content, Sider } = Layout
-const { Title, Paragraph } = Typography
+const { Paragraph, Text, Title } = Typography
+
+type ReportItem = {
+  trade_date: string
+  source?: string
+  created_at?: string
+}
+
+type ReportDetail = {
+  md?: string
+}
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState<any[]>([])
-  const [selectedDate, setSelectedDate] = useState<string>('')
-  const [detail, setDetail] = useState<any>(null)
+  const [reports, setReports] = useState<ReportItem[]>([])
+  const [selectedDate, setSelectedDate] = useState('')
+  const [detail, setDetail] = useState<ReportDetail | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [detailLoading, setDetailLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function fetchJson<T>(path: string, fallback: T): Promise<T> {
+    try {
+      const res = await fetch(apiUrl(path))
+      if (!res.ok) return fallback
+      return (await res.json()) as T
+    } catch {
+      return fallback
+    }
+  }
 
   useEffect(() => {
+    let ignore = false
+
     async function load() {
-      const fetchJson = async (url: string, fallback: any) => {
-        try {
-          const res = await fetch(url)
-          if (!res.ok) return fallback
-          return await res.json()
-        } catch {
-          return fallback
+      setLoading(true)
+      setError('')
+      try {
+        const data = await fetchJson<ReportItem[]>('/api/history/reports', [])
+        if (ignore) return
+        setReports(data)
+        const first = data[0]?.trade_date || ''
+        setSelectedDate(first)
+        if (first) {
+          setDetailLoading(true)
+          const detailData = await fetchJson<ReportDetail | null>(`/api/history/reports/${first}`, null)
+          if (!ignore) setDetail(detailData)
+        }
+      } catch (err) {
+        if (!ignore) setError(err instanceof Error ? err.message : '加载失败')
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+          setDetailLoading(false)
         }
       }
-
-      const data = await fetchJson('http://127.0.0.1:8010/api/history/reports', [])
-      setReports(data)
-      const first = data[0]?.trade_date || ''
-      setSelectedDate(first)
-      if (first) {
-        const detailData = await fetchJson(`http://127.0.0.1:8010/api/history/reports/${first}`, null)
-        setDetail(detailData)
-      }
     }
+
     load()
+
+    return () => {
+      ignore = true
+    }
   }, [])
 
   async function selectReport(date: string) {
     setSelectedDate(date)
+    setDetail(null)
+    setDetailLoading(true)
     try {
-      const res = await fetch(`http://127.0.0.1:8010/api/history/reports/${date}`)
-      if (!res.ok) {
-        setDetail(null)
-        return
-      }
-      setDetail(await res.json())
-    } catch {
-      setDetail(null)
+      const detailData = await fetchJson<ReportDetail | null>(`/api/history/reports/${date}`, null)
+      setDetail(detailData)
+    } finally {
+      setDetailLoading(false)
     }
   }
 
   return (
-    <Layout>
-      <Header style={{ background: '#001529' }}>
-        <Space size="large">
-          <Link href="/" style={{ color: '#fff' }}>Dashboard</Link>
-          <Link href="/run-job" style={{ color: '#fff' }}>Run Job</Link>
-          <Link href="/reports" style={{ color: '#fff' }}>Reports</Link>
-          <Link href="/charts" style={{ color: '#fff' }}>Charts</Link>
-        </Space>
-      </Header>
-      <Layout>
-        <Sider width={320} style={{ background: '#fff', padding: 16, borderRight: '1px solid #f0f0f0' }}>
-          <Title level={4}>Reports</Title>
-          <List
-            bordered
-            dataSource={reports}
-            renderItem={(item: any) => (
-              <List.Item onClick={() => selectReport(item.trade_date)} style={{ cursor: 'pointer', background: item.trade_date === selectedDate ? '#e6f4ff' : undefined }}>
-                {item.trade_date}
-              </List.Item>
-            )}
-          />
-        </Sider>
-        <Content style={{ padding: 24 }}>
-          <Card>
-            <Title level={3}>Preview: {selectedDate || 'N/A'}</Title>
-            <Paragraph style={{ whiteSpace: 'pre-wrap' }}>{detail?.md || '暂无可预览内容。'}</Paragraph>
-          </Card>
-        </Content>
-      </Layout>
-    </Layout>
+    <AppShell>
+      <Space orientation="vertical" size={16} style={{ width: '100%' }}>
+        <PageIntro
+          eyebrow="Reports"
+          title="Research Reports"
+          description="查看历史日报归档，快速切换日期并预览 Markdown 报告内容。"
+        />
+
+        {error ? <Alert type="error" showIcon title="加载失败" description={error} /> : null}
+
+        <Row gutter={[16, 16]} align="stretch">
+          <Col xs={24} lg={7}>
+            <Card title="报告列表" className="full-height-card">
+              {loading ? (
+                <Skeleton active paragraph={{ rows: 8 }} />
+              ) : reports.length ? (
+                <List
+                  className="report-list"
+                  dataSource={reports}
+                  renderItem={(item) => (
+                    <List.Item
+                      className={item.trade_date === selectedDate ? 'report-list-item report-list-item-active' : 'report-list-item'}
+                      onClick={() => selectReport(item.trade_date)}
+                    >
+                      <Space orientation="vertical" size={4}>
+                        <Text strong>{item.trade_date}</Text>
+                        <Space wrap>
+                          {item.source ? <Tag>{item.source}</Tag> : null}
+                          {item.created_at ? <Text type="secondary">{item.created_at}</Text> : null}
+                        </Space>
+                      </Space>
+                    </List.Item>
+                  )}
+                />
+              ) : (
+                <Empty description="暂无历史报告" />
+              )}
+            </Card>
+          </Col>
+          <Col xs={24} lg={17}>
+            <Card className="full-height-card">
+              <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                <div>
+                  <Text type="secondary">Preview</Text>
+                  <Title level={3} style={{ margin: 0 }}>{selectedDate || 'N/A'}</Title>
+                </div>
+                {detailLoading ? (
+                  <Skeleton active paragraph={{ rows: 14 }} />
+                ) : detail?.md ? (
+                  <Paragraph className="markdown-preview">{detail.md}</Paragraph>
+                ) : (
+                  <Empty description="暂无可预览内容" />
+                )}
+              </Space>
+            </Card>
+          </Col>
+        </Row>
+      </Space>
+    </AppShell>
   )
 }

@@ -22,6 +22,7 @@ from packages.python.execution.pipeline import run_pipeline
 from packages.python.paper_execution import list_paper_positions, list_paper_trades, paper_portfolio_summary
 from packages.python.report_archive import list_archived_reports, read_archived_report
 from packages.python.resonance_analytics import resonance_validation_summary
+from packages.python.sector_growth_model import forecast_sector_growth
 from packages.python.storage import list_runs, list_signals_by_run, list_validations
 from packages.python.strategy_portfolios import strategy_portfolio_summary
 from packages.python.portfolio_evaluator import evaluate_strategy_portfolios
@@ -166,6 +167,21 @@ def themes_heat(limit: int = 10):
     }
 
 
+@app.get("/api/research/sector-growth")
+def research_sector_growth(
+    limit: int = 12,
+    include_market_heat: bool = True,
+    market_limit: int = 120,
+    mode: str = "early_alpha",
+):
+    return forecast_sector_growth(
+        limit=limit,
+        include_market_heat=include_market_heat,
+        market_limit=market_limit,
+        mode=mode,
+    )
+
+
 @app.get("/api/report/daily")
 def daily_report():
     payload = run_pipeline()
@@ -240,5 +256,3 @@ def analytics_strategy_governor(limit: int = 200):
 @app.get("/api/analytics/experiment-lab")
 def analytics_experiment_lab(limit: int = 160):
     return run_experiment_lab(limit=limit)
-
-
