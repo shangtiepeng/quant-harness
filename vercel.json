@@ -5,6 +5,9 @@
       "use": "@vercel/python"
     }
   ],
+  "env": {
+    "MARKET_DATA_PROVIDER_ORDER": "sample"
+  },
   "routes": [
     {
       "src": "/(.*)",
