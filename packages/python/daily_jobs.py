@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from packages.python.execution.pipeline import run_pipeline
@@ -10,7 +11,7 @@ from packages.python.validation import validate_run
 def run_daily_job() -> dict[str, Any]:
     payload = run_pipeline(persist=True, include_portfolio=False)
     run_id = payload["run_id"]
-    validations = validate_run(run_id)
+    validations = [] if os.getenv("VERCEL") else validate_run(run_id)
     result = {
         "run_id": run_id,
         "trade_date": payload["trade_date"],

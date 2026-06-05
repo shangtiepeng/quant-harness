@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-DB_DIR = ROOT / "data" / "runtime"
+DB_DIR = Path("/tmp/quant-harness/runtime") if os.getenv("VERCEL") else ROOT / "data" / "runtime"
 DB_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DB_DIR / "quant_harness.db"
 
