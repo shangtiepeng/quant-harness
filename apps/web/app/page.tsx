@@ -37,6 +37,8 @@ type DashboardData = {
   runs: ApiRecord[]
   validations: ApiRecord[]
   performance: ApiRecord[]
+  themeHeatMeta: ApiRecord | null
+  themeHeatMethodology: ApiRecord | null
   themeHeat: ApiRecord[]
 }
 
@@ -68,6 +70,27 @@ type TableRow = ApiRecord & {
   key: string
 }
 
+type ThemeHeatPayload = {
+  meta?: ApiRecord | null
+  methodology?: ApiRecord | null
+  items?: ApiRecord[]
+}
+
+type ThemeHeatRow = TableRow & {
+  theme: string
+  count: number
+  heat_score: number
+  is_mainline: boolean
+  heat_stage: string
+  continuation_score: number
+  duration_label: string
+  duration_reasons: string[]
+  invalidation_signals: string[]
+  watch_points: string[]
+  leaders: string[]
+  stats: ApiRecord
+}
+
 const initialData: DashboardData = {
   meta: null,
   market: null,
@@ -81,6 +104,8 @@ const initialData: DashboardData = {
   runs: [],
   validations: [],
   performance: [],
+  themeHeatMeta: null,
+  themeHeatMethodology: null,
   themeHeat: [],
 }
 
@@ -139,6 +164,7 @@ function percentValue(value: unknown): string {
 export default function Page() {
   const [data, setData] = useState<DashboardData>(initialData)
   const [selectedSignalKey, setSelectedSignalKey] = useState<string | null>(null)
+  const [selectedThemeKey, setSelectedThemeKey] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -181,7 +207,7 @@ export default function Page() {
           fetchApi<ApiRecord[]>('/api/history/runs', []),
           fetchApi<ApiRecord[]>('/api/history/validations', []),
           fetchApi<ApiRecord[]>('/api/analytics/strategy-performance', []),
-          fetchApi<{ items?: ApiRecord[] }>('/api/themes/heat', { items: [] }),
+          fetchApi<ThemeHeatPayload>('/api/themes/heat', { items: [] }),
         ])
 
         if (ignore) return
@@ -199,6 +225,8 @@ export default function Page() {
           runs,
           validations,
           performance,
+          themeHeatMeta: themeHeatPayload.meta || null,
+          themeHeatMethodology: themeHeatPayload.methodology || null,
           themeHeat: themeHeatPayload.items || [],
         })
       } catch (err) {
@@ -257,8 +285,26 @@ export default function Page() {
   }, [candidates, selectedSignalKey])
 
   const selectedSignal = candidates.find((item) => item.key === selectedSignalKey) || null
-  const themeHeat = data.themeHeat.map((record, index) => ({ ...record, key: asString(record.theme, `theme-${index}`) }))
+  const themeHeat = useMemo<ThemeHeatRow[]>(() => {
+    return data.themeHeat.map((record, index) => ({
+      ...record,
+      key: asString(record.theme, `theme-${index}`),
+      theme: asString(record.theme, '未分类'),
+      count: asNumber(record.count),
+      heat_score: asNumber(record.heat_score),
+      is_mainline: Boolean(record.is_mainline),
+      heat_stage: asString(record.heat_stage, '观察'),
+      continuation_score: asNumber(record.continuation_score),
+      duration_label: asString(record.duration_label, '暂无'),
+      duration_reasons: asStringArray(record.duration_reasons),
+      invalidation_signals: asStringArray(record.invalidation_signals),
+      watch_points: asStringArray(record.watch_points),
+      leaders: asStringArray(record.leaders),
+      stats: typeof record.stats === 'object' && record.stats !== null && !Array.isArray(record.stats) ? record.stats as ApiRecord : {},
+    }))
+  }, [data.themeHeat])
   const mainlineThemes = data.themeHeat.filter((item) => Boolean(item.is_mainline)).map((item) => asString(item.theme))
+  const selectedTheme = themeHeat.find((item) => item.key === selectedThemeKey) || themeHeat[0] || null
   const selectedThemePeers = selectedSignal
     ? candidates.filter((item) => item.key !== selectedSignal.key && item.theme === selectedSignal.theme)
     : []
@@ -281,6 +327,16 @@ export default function Page() {
     display: `${asString(record.name, '-')} (${asString(record.symbol, '-')})`,
   }))
   const performance = data.performance.map((record) => ({ ...record, key: asString(record.strategy, String(record.bucket || 'strategy')) }))
+
+  useEffect(() => {
+    if (!themeHeat.length) {
+      setSelectedThemeKey(null)
+      return
+    }
+    if (!selectedThemeKey || !themeHeat.find((item) => item.key === selectedThemeKey)) {
+      setSelectedThemeKey(themeHeat[0].key)
+    }
+  }, [selectedThemeKey, themeHeat])
 
   const signalColumns: ColumnsType<CandidateRow> = [
     {
@@ -380,29 +436,48 @@ export default function Page() {
     { title: '1日胜率', dataIndex: 'win_rate_1d', key: 'win_rate_1d', width: 130 },
   ]
 
-  const themeHeatColumns: ColumnsType<TableRow> = [
+  const themeHeatColumns: ColumnsType<ThemeHeatRow> = [
     {
       title: '题材',
       dataIndex: 'theme',
       key: 'theme',
       width: 180,
-      render: (value: unknown, record) => (
+      render: (value: string, record) => (
         <Space wrap>
-          <Tag color="volcano">{asString(value, '未分类')}</Tag>
+          <Tag color="volcano">{value}</Tag>
           {record.is_mainline ? <Tag color="red">主线</Tag> : null}
         </Space>
       ),
     },
+    {
+      title: '强度/持续',
+      dataIndex: 'continuation_score',
+      key: 'continuation_score',
+      width: 170,
+      render: (value: number, record) => (
+        <Space orientation="vertical" size={2} style={{ width: 130 }}>
+          <Text strong>{record.heat_score} / {value}</Text>
+          <Progress percent={value} size="small" showInfo={false} />
+          <Text type="secondary">{record.heat_stage}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: '预计持续',
+      dataIndex: 'duration_label',
+      key: 'duration_label',
+      width: 120,
+      render: (value: string) => <Tag color="blue">{value}</Tag>,
+    },
     { title: '出现数', dataIndex: 'count', key: 'count', width: 90 },
-    { title: '强度分', dataIndex: 'heat_score', key: 'heat_score', width: 100 },
     {
       title: '代表个股',
       dataIndex: 'leaders',
       key: 'leaders',
       width: 280,
-      render: (leaders: unknown) => (
+      render: (leaders: string[]) => (
         <Space wrap>
-          {asStringArray(leaders).map((item) => <Tag key={item}>{item}</Tag>)}
+          {leaders.map((item) => <Tag key={item}>{item}</Tag>)}
         </Space>
       ),
     },
@@ -597,19 +672,95 @@ export default function Page() {
         </Card>
 
         <Row gutter={[16, 16]} align="stretch">
-          <Col xs={24} xl={10}>
-            <Card title="题材热度榜" loading={loading} style={{ height: '100%' }}>
+          <Col xs={24} xl={13}>
+            <Card title="题材热度分析与持续时间预测" loading={loading} style={{ height: '100%' }}>
+              <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                <Alert
+                  type="info"
+                  showIcon
+                  title={`市场情绪：${asString(data.themeHeatMeta?.market_stage_cn, '暂无')}`}
+                  description={asString(data.themeHeatMethodology?.duration_note, '持续时间为模型估计，用于盘后研究和次日验证。')}
+                />
               <Table
                 className="app-table"
                 columns={themeHeatColumns}
                 dataSource={themeHeat}
                 pagination={{ pageSize: 6 }}
-                scroll={{ x: 680 }}
+                scroll={{ x: 900 }}
                 size="middle"
+                  rowClassName={(record) => record.key === selectedThemeKey ? 'selected-signal-row' : ''}
+                  onRow={(record) => ({
+                    onClick: () => setSelectedThemeKey(record.key),
+                    style: { cursor: 'pointer' },
+                  })}
               />
+              </Space>
             </Card>
           </Col>
-          <Col xs={24} xl={14}>
+          <Col xs={24} xl={11}>
+            <Card title="选中题材持续性拆解" loading={loading} style={{ height: '100%' }}>
+              {selectedTheme ? (
+                <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                  <Space wrap>
+                    <Tag color="volcano">{selectedTheme.theme}</Tag>
+                    {selectedTheme.is_mainline ? <Tag color="red">主线</Tag> : null}
+                    <Tag color="blue">{selectedTheme.heat_stage}</Tag>
+                    <Tag color="geekblue">预计 {selectedTheme.duration_label}</Tag>
+                  </Space>
+                  <Row gutter={[12, 12]}>
+                    <Col xs={12} md={6}>
+                      <MetricCard title="热度分" value={selectedTheme.heat_score} />
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <MetricCard title="持续性分" value={selectedTheme.continuation_score} />
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <MetricCard title="平均涨幅" value={asNumber(selectedTheme.stats.avg_pct_change)} suffix="%" />
+                    </Col>
+                    <Col xs={12} md={6}>
+                      <MetricCard title="最高连板" value={asNumber(selectedTheme.stats.top_board)} />
+                    </Col>
+                  </Row>
+                  <Descriptions column={1} size="small" bordered>
+                    <Descriptions.Item label="平均量比">{asNumber(selectedTheme.stats.avg_volume_ratio)}</Descriptions.Item>
+                    <Descriptions.Item label="平均换手">{asNumber(selectedTheme.stats.avg_turnover_rate)}%</Descriptions.Item>
+                    <Descriptions.Item label="资金强度">{asNumber(selectedTheme.stats.funding_score)}</Descriptions.Item>
+                    <Descriptions.Item label="龙头强度">{asNumber(selectedTheme.stats.leadership_score)}</Descriptions.Item>
+                  </Descriptions>
+                  <div>
+                    <Text strong>预测理由</Text>
+                    <ul className="compact-list">
+                      {selectedTheme.duration_reasons.map((item) => <li key={`duration-${item}`}>{item}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <Text strong>观察点</Text>
+                    <ul className="compact-list">
+                      {selectedTheme.watch_points.map((item) => <li key={`watch-${item}`}>{item}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <Text strong>失效信号</Text>
+                    <ul className="compact-list">
+                      {selectedTheme.invalidation_signals.map((item) => <li key={`invalid-${item}`}>{item}</li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <Text strong>代表个股</Text>
+                    <div className="tag-block">
+                      {selectedTheme.leaders.map((item) => <Tag key={`leader-${item}`}>{item}</Tag>)}
+                    </div>
+                  </div>
+                </Space>
+              ) : (
+                <Empty description="点击题材后显示持续性拆解" />
+              )}
+            </Card>
+          </Col>
+        </Row>
+
+        <Row gutter={[16, 16]} align="stretch">
+          <Col xs={24}>
             <Card title="强共振候选池" loading={loading} style={{ height: '100%' }}>
               <Table
                 className="app-table"

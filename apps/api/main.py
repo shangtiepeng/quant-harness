@@ -10,8 +10,6 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
-from collections import Counter
-
 from packages.python.analytics import strategy_performance_summary
 from packages.python.lifecycle_analytics import trade_lifecycle_summary
 from packages.python.strategy_governor import build_strategy_governor
@@ -27,6 +25,7 @@ from packages.python.storage import list_runs, list_signals_by_run, list_validat
 from packages.python.strategy_portfolios import strategy_portfolio_summary
 from packages.python.portfolio_evaluator import evaluate_strategy_portfolios
 from packages.python.experiment_lab import run_experiment_lab
+from packages.python.theme_heat import build_theme_heat_analysis
 from packages.python.validation import validate_run
 from packages.python.data.real_collectors import load_market_data
 
@@ -133,38 +132,8 @@ def strategy_portfolios_evaluator(limit: int = 120):
 
 
 @app.get("/api/themes/heat")
-def themes_heat(limit: int = 10):
-    stocks, meta = load_market_data(limit=50)
-    counter: Counter[str] = Counter()
-    score_map: dict[str, float] = {}
-    leaders: dict[str, list[str]] = {}
-    for stock in stocks:
-        concepts = stock.concepts or ([stock.theme] if stock.theme else [])
-        for idx, concept in enumerate(concepts[:3]):
-            if not concept or concept == '题材待补全':
-                continue
-            weight = 1.0 if idx == 0 else 0.6 if idx == 1 else 0.3
-            counter[concept] += 1
-            score_map[concept] = score_map.get(concept, 0.0) + (
-                weight * (1 + max(stock.pct_change, 0) / 10 + stock.volume_ratio / 5)
-            )
-            leaders.setdefault(concept, [])
-            if len(leaders[concept]) < 3:
-                leaders[concept].append(f"{stock.name}({stock.symbol})")
-    ranked = sorted(counter.items(), key=lambda item: (score_map.get(item[0], 0), item[1]), reverse=True)
-    return {
-        "meta": meta,
-        "items": [
-            {
-                "theme": theme,
-                "count": count,
-                "heat_score": round(score_map.get(theme, 0.0), 2),
-                "is_mainline": index < 3,
-                "leaders": leaders.get(theme, []),
-            }
-            for index, (theme, count) in enumerate(ranked[:limit])
-        ],
-    }
+def themes_heat(limit: int = 10, market_limit: int = 50):
+    return build_theme_heat_analysis(limit=limit, market_limit=market_limit)
 
 
 @app.get("/api/research/sector-growth")
